@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "key_name": "site_title",
+    "value_text": "GOWTHAM G | Full Stack Developer | MCA Student"
+  },
+  {
+    "id": 2,
+    "key_name": "logo_text",
+    "value_text": "GOWTHAM G"
+  },
+  {
+    "id": 3,
+    "key_name": "seo_description",
+    "value_text": "Personal Portfolio of Gowtham G - MCA Student, Full Stack Developer, React Developer, Backend Developer, and Web Application Specialist based in Salem, Tamil Nadu, India."
+  },
+  {
+    "id": 4,
+    "key_name": "seo_keywords",
+    "value_text": "Gowtham G, Full Stack Developer, React Developer, MCA Student, Backend Developer, Web Developer Portfolio, ReactJS, Node.js, Tailwind CSS, Salem"
+  },
+  {
+    "id": 5,
+    "key_name": "footer_text",
+    "value_text": "Designed & Developed with React, Tailwind CSS & Vite"
+  }
+]
