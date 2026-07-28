@@ -1,91 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// Common Components
-import { Navbar } from './components/common/Navbar';
-import { Footer } from './components/common/Footer';
-import { ScrollProgress } from './components/common/ScrollProgress';
-import { LoadingScreen } from './components/common/LoadingScreen';
-import { CursorFollower } from './components/common/CursorFollower';
-import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { PublicPortfolio } from './pages/PublicPortfolio';
+import { StudioLogin } from './admin/pages/StudioLogin';
+import { StudioLayout } from './admin/components/StudioLayout';
+import { ProtectedStudioRoute } from './admin/components/ProtectedStudioRoute';
 
-// Section Components
-import { Hero } from './components/sections/Hero';
-import { About } from './components/sections/About';
-import { Projects } from './components/sections/Projects';
-import { Skills } from './components/sections/Skills';
-import { Education } from './components/sections/Education';
-import { Certificates } from './components/sections/Certificates';
-import { Contact } from './components/sections/Contact';
+import { StudioDashboard } from './admin/pages/StudioDashboard';
+import { ManageAbout } from './admin/pages/ManageAbout';
+import { ManageSkills } from './admin/pages/ManageSkills';
+import { ManageProjects } from './admin/pages/ManageProjects';
+import { ManageEducation } from './admin/pages/ManageEducation';
+import { ManageCertificates } from './admin/pages/ManageCertificates';
+import { ManageMessages } from './admin/pages/ManageMessages';
+import { ManageResume } from './admin/pages/ManageResume';
+import { ManageSettings } from './admin/pages/ManageSettings';
+import { ActivityLogs } from './admin/pages/ActivityLogs';
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState('home');
-
-  // Initial Loader Timeout
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1200);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // IntersectionObserver Scrollspy for Nav
-  useEffect(() => {
-    const sections = document.querySelectorAll('section[id]');
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      {
-        rootMargin: '-20% 0px -60% 0px',
-        threshold: 0
-      }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-
-    return () => {
-      sections.forEach((section) => observer.unobserve(section));
-    };
-  }, [isLoading]);
-
   return (
-    <ErrorBoundary>
-      <div className="relative bg-bgDark text-textLight min-h-screen font-body selection:bg-primaryBlue selection:text-white">
-        {/* Loading Screen */}
-        <AnimatePresence>
-          {isLoading && <LoadingScreen key="loader" />}
-        </AnimatePresence>
+    <BrowserRouter>
+      <Routes>
+        {/* Public Portfolio Route */}
+        <Route path="/" element={<PublicPortfolio />} />
 
-        {/* Ambient Top Reading Progress */}
-        <ScrollProgress />
+        {/* Studio Admin Routes */}
+        <Route path="/studio/login" element={<StudioLogin />} />
 
-        {/* Desktop Ambient Cursor Glow */}
-        <CursorFollower />
+        {/* Protected Studio Routes */}
+        <Route element={<ProtectedStudioRoute />}>
+          <Route path="/studio" element={<StudioLayout />}>
+            <Route index element={<Navigate to="/studio/dashboard" replace />} />
+            <Route path="dashboard" element={<StudioDashboard />} />
+            <Route path="about" element={<ManageAbout />} />
+            <Route path="skills" element={<ManageSkills />} />
+            <Route path="projects" element={<ManageProjects />} />
+            <Route path="education" element={<ManageEducation />} />
+            <Route path="certificates" element={<ManageCertificates />} />
+            <Route path="messages" element={<ManageMessages />} />
+            <Route path="resume" element={<ManageResume />} />
+            <Route path="settings" element={<ManageSettings />} />
+            <Route path="logs" element={<ActivityLogs />} />
+          </Route>
+        </Route>
 
-        {/* Sticky Glass Navbar */}
-        <Navbar activeSection={activeSection} />
-
-        {/* Main Content Sections */}
-        <main id="main-content">
-          <Hero />
-          <About />
-          <Projects />
-          <Skills />
-          <Education />
-          <Certificates />
-          <Contact />
-        </main>
-
-        {/* Footer */}
-        <Footer />
-      </div>
-    </ErrorBoundary>
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
