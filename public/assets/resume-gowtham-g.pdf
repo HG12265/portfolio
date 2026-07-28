@@ -1,0 +1,94 @@
+%PDF-1.4
+1 0 obj
+<<
+/Title (Gowtham G - Resume)
+/Author (Gowtham G)
+/Subject (Full Stack Developer & MCA Student Resume)
+/Creator (Gowtham G Portfolio)
+>>
+endobj
+2 0 obj
+<<
+/Type /Catalog
+/Pages 3 0 R
+>>
+endobj
+3 0 obj
+<<
+/Type /Pages
+/Kids [4 0 R]
+/Count 1
+>>
+endobj
+4 0 obj
+<<
+/Type /Page
+/Parent 3 0 R
+/MediaBox [0 0 612 792]
+/Resources <<
+  /Font <<
+    /F1 <<
+      /Type /Font
+      /Subtype /Type1
+      /BaseFont /Helvetica-Bold
+    >>
+    /F2 <<
+      /Type /Font
+      /Subtype /Type1
+      /BaseFont /Helvetica
+    >>
+  >>
+>>
+/Contents 5 0 R
+>>
+endobj
+5 0 obj
+<< /Length 480 >>
+stream
+BT
+/F1 24 Tf
+50 720 TD
+(GOWTHAM G) Tj
+/F2 12 Tf
+0 -20 TD
+(Full Stack Developer | MCA Student | React & Backend Engineer) Tj
+0 -15 TD
+(Email: gowthamg.dev@gmail.com | Location: Tamil Nadu, India) Tj
+0 -30 TD
+/F1 14 Tf
+(EDUCATION) Tj
+/F2 11 Tf
+0 -18 TD
+(Master of Computer Applications \(MCA\) - 2024-2026) Tj
+0 -15 TD
+(Bachelor of Computer Applications \(BCA\) - 2021-2024 \(Distinction\)) Tj
+0 -30 TD
+/F1 14 Tf
+(TECHNICAL SKILLS) Tj
+/F2 11 Tf
+0 -18 TD
+(Frontend: React.js, JavaScript ES6+, Tailwind CSS, HTML5/CSS3, Redux Toolkit) Tj
+0 -15 TD
+(Backend: Node.js, Express.js, RESTful APIs, MongoDB, PostgreSQL, MySQL) Tj
+0 -15 TD
+(Languages & Tools: Python, C++, TypeScript, Git, GitHub, Postman, Vercel) Tj
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000115 00000 n 
+0000000165 00000 n 
+0000000224 00000 n 
+0000000450 00000 n 
+trailer
+<<
+/Size 6
+/Root 2 0 R
+/Info 1 0 R
+>>
+startxref
+981
+%%EOF
