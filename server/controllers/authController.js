@@ -1,4 +1,5 @@
-import { getDb, readJsonStore } from '../config/db.js';
+import Admin from '../models/Admin.js';
+import { readJsonStore } from '../config/db.js';
 import { comparePassword, generateToken } from '../utils/security.js';
 import { logActivity } from '../middleware/auditMiddleware.js';
 
@@ -10,13 +11,17 @@ export const login = async (req, res) => {
   }
 
   try {
-    const { pool, isMysqlConnected } = getDb();
     let admin = null;
 
-    if (isMysqlConnected && pool) {
-      const [rows] = await pool.query('SELECT * FROM admins WHERE username = ? OR email = ?', [username, username]);
-      if (rows.length > 0) admin = rows[0];
-    } else {
+    try {
+      admin = await Admin.findOne({
+        $or: [{ username }, { email: username }]
+      }).lean();
+    } catch {
+      admin = null;
+    }
+
+    if (!admin) {
       const admins = readJsonStore('admins');
       admin = admins.find(a => a.username === username || a.email === username);
     }
@@ -30,17 +35,17 @@ export const login = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid admin credentials.' });
     }
 
-    const token = generateToken({ id: admin.id, username: admin.username, role: admin.role });
+    const token = generateToken({ id: admin._id || admin.id, username: admin.username, role: admin.role });
 
     // Set cross-site compatible cookie
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      maxAge: 24 * 60 * 60 * 1000
     });
 
-    req.user = { id: admin.id, username: admin.username };
+    req.user = { id: admin._id || admin.id, username: admin.username };
     await logActivity(req, 'LOGIN', 'Auth', `Admin ${admin.username} logged into Studio`);
 
     return res.status(200).json({
@@ -48,7 +53,7 @@ export const login = async (req, res) => {
       message: 'Authentication successful. Welcome to Studio Dashboard!',
       token,
       user: {
-        id: admin.id,
+        id: admin._id || admin.id,
         username: admin.username,
         email: admin.email,
         role: admin.role

@@ -1,19 +1,18 @@
-import { getDb, readJsonStore, writeJsonStore } from '../config/db.js';
-import { logActivity } from '../middleware/auditMiddleware.js';
+import ContactMessage from '../models/ContactMessage.js';
+import { readJsonStore, writeJsonStore } from '../config/db.js';
 import { sendContactNotification } from '../services/emailService.js';
 
 export const getMessages = async (req, res) => {
   try {
-    const { pool, isMysqlConnected } = getDb();
-    if (isMysqlConnected && pool) {
-      const [rows] = await pool.query('SELECT * FROM contact_messages ORDER BY created_at DESC');
-      return res.status(200).json({ success: true, data: rows });
+    const messages = await ContactMessage.find().sort({ created_at: -1 }).lean();
+    if (messages && messages.length > 0) {
+      return res.status(200).json({ success: true, data: messages });
     }
-    const messages = readJsonStore('contact_messages');
-    messages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    return res.status(200).json({ success: true, data: messages });
+    const jsonMsgs = readJsonStore('contact_messages');
+    return res.status(200).json({ success: true, data: jsonMsgs });
   } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
+    const jsonMsgs = readJsonStore('contact_messages');
+    return res.status(200).json({ success: true, data: jsonMsgs });
   }
 };
 
@@ -25,34 +24,29 @@ export const submitMessage = async (req, res) => {
     }
 
     const ip_address = req.ip || req.connection.remoteAddress || '127.0.0.1';
-    const { pool, isMysqlConnected } = getDb();
-
     let insertedId = null;
 
-    if (isMysqlConnected && pool) {
-      const [result] = await pool.query(
-        'INSERT INTO contact_messages (name, email, subject, message, is_read, ip_address) VALUES (?, ?, ?, ?, 0, ?)',
-        [name, email, subject || 'General Inquiry', message, ip_address]
-      );
-      insertedId = result.insertId;
-    } else {
-      const messages = readJsonStore('contact_messages');
-      insertedId = Date.now();
-      const newMsg = {
-        id: insertedId,
+    try {
+      const newMsg = await ContactMessage.create({
         name,
         email,
         subject: subject || 'General Inquiry',
         message,
         is_read: false,
-        ip_address,
+        ip_address
+      });
+      insertedId = newMsg._id;
+    } catch {
+      const jsonMsgs = readJsonStore('contact_messages');
+      insertedId = Date.now();
+      jsonMsgs.unshift({
+        id: insertedId,
+        name, email, subject: subject || 'General Inquiry', message, is_read: false, ip_address,
         created_at: new Date().toISOString()
-      };
-      messages.unshift(newMsg);
-      writeJsonStore('contact_messages', messages);
+      });
+      writeJsonStore('contact_messages', jsonMsgs);
     }
 
-    // Trigger async email dispatch to itsgowtham.dev@gmail.com
     sendContactNotification({ name, email, subject, message }).catch(err => {
       console.error('Async email dispatch error:', err);
     });
@@ -71,17 +65,13 @@ export const toggleReadStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { is_read } = req.body;
-    const { pool, isMysqlConnected } = getDb();
 
-    if (isMysqlConnected && pool) {
-      await pool.query('UPDATE contact_messages SET is_read = ? WHERE id = ?', [is_read ? 1 : 0, id]);
-    } else {
-      const messages = readJsonStore('contact_messages');
-      const index = messages.findIndex(m => m.id == id);
-      if (index !== -1) {
-        messages[index].is_read = !!is_read;
-        writeJsonStore('contact_messages', messages);
-      }
+    try {
+      await ContactMessage.findByIdAndUpdate(id, { is_read: !!is_read });
+    } catch {
+      let jsonMsgs = readJsonStore('contact_messages');
+      jsonMsgs = jsonMsgs.map(m => m.id == id ? { ...m, is_read: !!is_read } : m);
+      writeJsonStore('contact_messages', jsonMsgs);
     }
 
     return res.status(200).json({ success: true, message: 'Message status updated.' });
@@ -93,17 +83,14 @@ export const toggleReadStatus = async (req, res) => {
 export const deleteMessage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { pool, isMysqlConnected } = getDb();
-
-    if (isMysqlConnected && pool) {
-      await pool.query('DELETE FROM contact_messages WHERE id = ?', [id]);
-    } else {
-      let messages = readJsonStore('contact_messages');
-      messages = messages.filter(m => m.id != id);
-      writeJsonStore('contact_messages', messages);
+    try {
+      await ContactMessage.findByIdAndDelete(id);
+    } catch {
+      let jsonMsgs = readJsonStore('contact_messages');
+      jsonMsgs = jsonMsgs.filter(m => m.id != id);
+      writeJsonStore('contact_messages', jsonMsgs);
     }
 
-    await logActivity(req, 'DELETE', 'Messages', `Deleted contact message #${id}`);
     return res.status(200).json({ success: true, message: 'Message deleted successfully.' });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });

@@ -1,75 +1,69 @@
-import { getDb, readJsonStore } from '../config/db.js';
+import About from '../models/About.js';
+import Skill from '../models/Skill.js';
+import Project from '../models/Project.js';
+import Certificate from '../models/Certificate.js';
+import Education from '../models/Education.js';
+import Resume from '../models/Resume.js';
+import Setting from '../models/Setting.js';
+
+import { readJsonStore } from '../config/db.js';
 
 export const getPublicPortfolio = async (req, res) => {
   try {
-    const { pool, isMysqlConnected } = getDb();
+    let about = null;
+    let skills = [];
+    let projects = [];
+    let certificates = [];
+    let education = [];
+    let resume = null;
+    let settings = {};
 
-    if (isMysqlConnected && pool) {
-      const [aboutRows] = await pool.query('SELECT * FROM about WHERE id = 1');
-      const [skillsRows] = await pool.query('SELECT * FROM skills WHERE enabled = 1 ORDER BY display_order ASC, id ASC');
-      const [projectsRows] = await pool.query('SELECT * FROM projects WHERE published = 1 ORDER BY display_order ASC, id DESC');
-      const [certsRows] = await pool.query('SELECT * FROM certificates ORDER BY display_order ASC, id DESC');
-      const [eduRows] = await pool.query('SELECT * FROM education ORDER BY display_order ASC, id ASC');
-      const [resumeRows] = await pool.query('SELECT * FROM resumes WHERE is_active = 1 LIMIT 1');
-      const [settingsRows] = await pool.query('SELECT * FROM settings');
+    try {
+      about = await About.findOne().lean();
+      skills = await Skill.find({ enabled: true }).sort({ display_order: 1 }).lean();
+      projects = await Project.find({ published: true }).sort({ display_order: 1 }).lean();
+      certificates = await Certificate.find().sort({ display_order: 1 }).lean();
+      education = await Education.find().sort({ display_order: 1 }).lean();
+      resume = await Resume.findOne({ is_active: true }).lean();
 
-      const settingsMap = {};
-      settingsRows.forEach(s => { settingsMap[s.key_name] = s.value_text; });
-
-      const about = aboutRows[0] || {};
-      if (about.technical_interests) about.technical_interests = typeof about.technical_interests === 'string' ? JSON.parse(about.technical_interests) : about.technical_interests;
-      if (about.current_learning) about.current_learning = typeof about.current_learning === 'string' ? JSON.parse(about.current_learning) : about.current_learning;
-
-      const projects = projectsRows.map(p => ({
-        ...p,
-        tags: typeof p.tags === 'string' ? JSON.parse(p.tags) : p.tags,
-        features: typeof p.features === 'string' ? JSON.parse(p.features) : p.features,
-      }));
-
-      const education = eduRows.map(e => ({
-        ...e,
-        courses: typeof e.courses === 'string' ? JSON.parse(e.courses) : e.courses
-      }));
-
-      return res.status(200).json({
-        success: true,
-        data: {
-          about,
-          skills: skillsRows,
-          projects,
-          certificates: certsRows,
-          education,
-          resume: resumeRows[0] || { file_url: '/assets/resume-gowtham-g.pdf' },
-          settings: settingsMap
-        }
+      const settingsArr = await Setting.find().lean();
+      settingsArr.forEach(s => {
+        settings[s.key_name] = s.value_text;
       });
-    } else {
-      const about = readJsonStore('about')[0] || {};
-      const skills = readJsonStore('skills').filter(s => s.enabled !== false);
-      const projects = readJsonStore('projects').filter(p => p.published !== false);
-      const certs = readJsonStore('certificates');
-      const edu = readJsonStore('education');
-      const resumes = readJsonStore('resumes');
-      const activeResume = resumes.find(r => r.is_active) || { file_url: '/assets/resume-gowtham-g.pdf' };
-      const settingsStore = readJsonStore('settings');
-      const settingsMap = {};
-      settingsStore.forEach(s => { settingsMap[s.key_name] = s.value_text; });
-
-      return res.status(200).json({
-        success: true,
-        data: {
-          about,
-          skills,
-          projects,
-          certificates: certs,
-          education: edu,
-          resume: activeResume,
-          settings: settingsMap
-        }
-      });
+    } catch {
+      // Fallback
     }
+
+    if (!about) {
+      const aboutArr = readJsonStore('about');
+      about = aboutArr[0] || null;
+    }
+    if (skills.length === 0) skills = readJsonStore('skills').filter(s => s.enabled);
+    if (projects.length === 0) projects = readJsonStore('projects').filter(p => p.published);
+    if (certificates.length === 0) certificates = readJsonStore('certificates');
+    if (education.length === 0) education = readJsonStore('education');
+    if (!resume) {
+      const resumeArr = readJsonStore('resumes');
+      resume = resumeArr.find(r => r.is_active) || null;
+    }
+    if (Object.keys(settings).length === 0) {
+      const settingsArr = readJsonStore('settings');
+      settingsArr.forEach(s => { settings[s.key_name] = s.value_text; });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        about,
+        skills,
+        projects,
+        certificates,
+        education,
+        resume,
+        settings
+      }
+    });
   } catch (err) {
-    console.error('Public portfolio payload error:', err);
-    return res.status(500).json({ success: false, message: 'Failed to fetch public portfolio data.' });
+    return res.status(500).json({ success: false, message: err.message });
   }
 };

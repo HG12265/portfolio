@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: gowtham-portfolio-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        value: https://itsgowtham.vercel.app
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        value: gowtham_portfolio_production_jwt_secret_2026
+      - key: NOTIFICATION_EMAIL
+        value: itsgowtham.dev@gmail.com
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        value: itsgowtham.dev@gmail.com
+      - key: SMTP_PASS
+        value: tmptmifwbojzhast
