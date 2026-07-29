@@ -37,23 +37,70 @@ export const Contact = () => {
 
     setLoading(true);
     try {
-      // EmailJS client dispatch
-      await emailjs.sendForm(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_gowtham',
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_gowtham',
-        formRef.current,
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'public_key_gowtham'
+      const emailjsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const emailjsTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const emailjsPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+      const web3FormsKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+
+      // 1. Web3Forms integration (if configured)
+      if (web3FormsKey && web3FormsKey !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: web3FormsKey,
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject || 'Portfolio Contact Form Message',
+            message: formData.message,
+            from_name: formData.name,
+            to_email: about.email || 'itsgowtham.dev@gmail.com'
+          })
+        });
+        const res = await response.json();
+        if (res.success) {
+          setStatus({
+            type: 'success',
+            message: 'Thank you! Your message has been sent directly to Gowtham\'s email.'
+          });
+          setFormData({ name: '', email: '', subject: '', message: '' });
+          return;
+        }
+      }
+
+      // 2. EmailJS integration (if configured)
+      if (emailjsServiceId && emailjsTemplateId && emailjsPublicKey && emailjsServiceId !== 'service_gowtham') {
+        await emailjs.sendForm(
+          emailjsServiceId,
+          emailjsTemplateId,
+          formRef.current,
+          emailjsPublicKey
+        );
+        setStatus({
+          type: 'success',
+          message: 'Thank you! Your message has been sent successfully to Gowtham\'s email.'
+        });
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        return;
+      }
+
+      // 3. Fallback: mailto link
+      const subject = encodeURIComponent(formData.subject || `Portfolio Message from ${formData.name}`);
+      const body = encodeURIComponent(
+        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
       );
+      window.location.href = `mailto:${about.email || 'itsgowtham.dev@gmail.com'}?subject=${subject}&body=${body}`;
 
       setStatus({
         type: 'success',
-        message: 'Thank you! Your message has been sent successfully. Gowtham will get back to you shortly.'
+        message: `Opening your email client to send message to ${about.email || 'itsgowtham.dev@gmail.com'}.`
       });
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
+      console.error('Failed to send message:', error);
       setStatus({
-        type: 'success',
-        message: 'Thank you for reaching out! You can also email Gowtham directly at ' + (about.email || 'itsgowtham.dev@gmail.com')
+        type: 'error',
+        message: 'Failed to send message automatically. Please try emailing directly to ' + (about.email || 'itsgowtham.dev@gmail.com')
       });
     } finally {
       setLoading(false);
@@ -189,6 +236,9 @@ export const Contact = () => {
             </h3>
 
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+              <input type="hidden" name="to_email" value={about.email || 'itsgowtham.dev@gmail.com'} />
+              <input type="hidden" name="from_name" value={formData.name} />
+              <input type="hidden" name="from_email" value={formData.email} />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Your Name *</label>
