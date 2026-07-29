@@ -51,10 +51,11 @@ export const Contact = () => {
             access_key: web3FormsKey,
             name: formData.name,
             email: formData.email,
-            subject: formData.subject || 'Portfolio Contact Form Message',
+            replyto: formData.email,
+            subject: formData.subject ? `[Portfolio] ${formData.subject}` : `New Message from ${formData.name} via Portfolio`,
             message: formData.message,
-            from_name: formData.name,
-            to_email: about.email || 'itsgowtham.dev@gmail.com'
+            from_name: `${formData.name} (Portfolio Contact)`,
+            botcheck: false
           })
         });
         const res = await response.json();
