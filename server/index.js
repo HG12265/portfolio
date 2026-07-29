@@ -63,6 +63,14 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+// Strip cPanel subpath prefix (/portfolio-api) if passed by Passenger
+app.use((req, res, next) => {
+  if (req.url.startsWith('/portfolio-api')) {
+    req.url = req.url.replace('/portfolio-api', '') || '/';
+  }
+  next();
+});
+
 // Serve Static Uploads
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
@@ -88,6 +96,21 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'online',
+    message: 'Portfolio CMS Backend API running live on cPanel Node.js Server!',
+    endpoints: {
+      health: '/api/health',
+      portfolio: '/api/public/portfolio'
+    }
+  });
+});
+
 // Await DB connection first, then run seed
 (async () => {
   await initDb();
@@ -96,3 +119,5 @@ app.get('/api/health', (req, res) => {
     console.log(`[Server] Portfolio CMS Backend running on http://localhost:${PORT}`);
   });
 })();
+
+export default app;
