@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaPlus, FaEdit, FaTrash, FaFilePdf, FaExternalLinkAlt, FaCloudUploadAlt } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaFilePdf, FaExternalLinkAlt, FaCloudUploadAlt, FaLink } from 'react-icons/fa';
 import api from '../services/api';
 import { Button } from '../../components/common/Button';
 import { Modal } from '../../components/common/Modal';
@@ -8,7 +8,7 @@ const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').r
 
 const formatFileUrl = (url) => {
   if (!url) return '/assets/mentor-mentee.png';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
   if (url.startsWith('/uploads')) return `${API_BASE_URL}${url}`;
   return url;
 };
@@ -103,8 +103,9 @@ export const ManageCertificates = () => {
     }
 
     try {
-      if (editingCert) {
-        await api.put(`/admin/certificates/${editingCert.id}`, payload, {
+      const targetId = editingCert ? (editingCert._id || editingCert.id) : null;
+      if (targetId) {
+        await api.put(`/admin/certificates/${targetId}`, payload, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
       } else {
@@ -141,7 +142,7 @@ export const ManageCertificates = () => {
           const isPdf = fileUrl.toLowerCase().endsWith('.pdf');
 
           return (
-            <div key={cert.id} className="glass-card rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-between">
+            <div key={cert._id || cert.id} className="glass-card rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-between">
               <div>
                 <div className="relative aspect-video bg-surfaceDark overflow-hidden border-b border-white/5">
                   {isPdf ? (
@@ -185,7 +186,7 @@ export const ManageCertificates = () => {
                   <button onClick={() => handleOpenEdit(cert)} className="p-2 rounded-lg bg-white/5 hover:text-accentSky border border-white/10" title="Edit">
                     <FaEdit className="w-3.5 h-3.5" />
                   </button>
-                  <button onClick={() => handleDelete(cert.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20" title="Delete">
+                  <button onClick={() => handleDelete(cert._id || cert.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20" title="Delete">
                     <FaTrash className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -247,19 +248,31 @@ export const ManageCertificates = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Certificate Image / PDF Upload *</label>
-            <div className="flex items-center gap-3">
-              <input
-                type="file"
-                accept="image/*,application/pdf"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
-                className="w-full text-xs text-textMuted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-mono file:bg-primaryBlue file:text-white hover:file:bg-blue-600 cursor-pointer"
-              />
+          {/* Certificate Image / PDF File Upload & Direct File URL */}
+          <div className="space-y-2 border-t border-white/10 pt-3">
+            <label className="block text-xs font-mono text-textMuted uppercase">Certificate Image / PDF File *</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+              <div>
+                <span className="text-[11px] font-mono text-textMuted block mb-1">Option A: Upload File</span>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={(e) => setSelectedFile(e.target.files[0])}
+                  className="w-full text-xs text-textMuted file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-mono file:bg-primaryBlue file:text-white hover:file:bg-blue-600 cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <span className="text-[11px] font-mono text-textMuted block mb-1">Option B: Direct File / PDF URL</span>
+                <input
+                  type="text"
+                  value={formData.image_url}
+                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                  placeholder="https://example.com/cert.pdf or /assets/..."
+                  className="w-full px-3 py-1.5 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight font-mono"
+                />
+              </div>
             </div>
-            {editingCert && !selectedFile && (
-              <p className="text-[11px] font-mono text-textMuted mt-1">Current file: {formData.image_url}</p>
-            )}
           </div>
 
           <div>

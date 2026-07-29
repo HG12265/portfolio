@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaPlus, FaEdit, FaTrash, FaStar, FaEye, FaEyeSlash, FaExternalLinkAlt, FaGithub } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaStar, FaEye, FaEyeSlash, FaExternalLinkAlt, FaGithub, FaImage } from 'react-icons/fa';
 import api from '../services/api';
 import { Button } from '../../components/common/Button';
 import { Modal } from '../../components/common/Modal';
@@ -9,7 +9,7 @@ const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').r
 
 const formatImageUrl = (url) => {
   if (!url) return '/assets/mentor-mentee.png';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:image')) return url;
   if (url.startsWith('/uploads')) return `${API_BASE_URL}${url}`;
   return url;
 };
@@ -67,7 +67,7 @@ export const ManageProjects = () => {
       category: 'Full Stack',
       description: '',
       long_description: '',
-      tags: 'React.js, Node.js, Express.js, MySQL, Tailwind CSS',
+      tags: 'React.js, Node.js, Express.js, MongoDB, Tailwind CSS',
       features: 'Role-based authentication, Interactive dashboard, RESTful APIs',
       architecture: 'Decoupled MERN stack architecture.',
       role: 'Full Stack Developer',
@@ -91,8 +91,8 @@ export const ManageProjects = () => {
       category: proj.category || 'Full Stack',
       description: proj.description || '',
       long_description: proj.long_description || '',
-      tags: Array.isArray(proj.tags) ? proj.tags.join(', ') : '',
-      features: Array.isArray(proj.features) ? proj.features.join('\n') : '',
+      tags: Array.isArray(proj.tags) ? proj.tags.join(', ') : (proj.tags || ''),
+      features: Array.isArray(proj.features) ? proj.features.join('\n') : (proj.features || ''),
       architecture: proj.architecture || '',
       role: proj.role || 'Full Stack Developer',
       duration: proj.duration || '',
@@ -123,13 +123,13 @@ export const ManageProjects = () => {
     const payload = new FormData();
     Object.keys(formData).forEach(key => {
       if (key === 'tags') {
-        const arr = formData.tags.split(',').map(t => t.trim()).filter(Boolean);
+        const arr = typeof formData.tags === 'string' ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : formData.tags;
         payload.append('tags', JSON.stringify(arr));
       } else if (key === 'features') {
-        const arr = formData.features.split('\n').map(f => f.trim()).filter(Boolean);
+        const arr = typeof formData.features === 'string' ? formData.features.split('\n').map(f => f.trim()).filter(Boolean) : formData.features;
         payload.append('features', JSON.stringify(arr));
       } else {
-        payload.append(key, formData[key]);
+        payload.append(key, formData[key] !== undefined ? formData[key] : '');
       }
     });
 
@@ -138,8 +138,9 @@ export const ManageProjects = () => {
     }
 
     try {
-      if (editingProject) {
-        await api.put(`/admin/projects/${editingProject.id}`, payload, {
+      const targetId = editingProject ? (editingProject._id || editingProject.id) : null;
+      if (targetId) {
+        await api.put(`/admin/projects/${targetId}`, payload, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
       } else {
@@ -172,10 +173,10 @@ export const ManageProjects = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((proj) => (
-          <div key={proj.id} className="glass-card rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-between">
+          <div key={proj._id || proj.id} className="glass-card rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-between">
             <div>
-              <div className="relative aspect-video bg-surfaceDark overflow-hidden">
-                <img src={formatImageUrl(proj.image_url)} alt={proj.title} className="w-full h-full object-cover" />
+              <div className="relative aspect-video bg-surfaceDark overflow-hidden border-b border-white/5">
+                <img src={formatImageUrl(proj.image_url)} alt={proj.title} onError={(e) => { e.currentTarget.src = '/assets/mentor-mentee.png'; }} className="w-full h-full object-cover" />
                 <div className="absolute top-3 left-3 flex gap-2">
                   <Badge variant="primary" size="xs">{proj.category}</Badge>
                   {proj.featured && <Badge variant="warning" size="xs">Featured</Badge>}
@@ -198,7 +199,7 @@ export const ManageProjects = () => {
                 <button onClick={() => handleOpenEdit(proj)} className="p-2 rounded-lg bg-white/5 hover:text-accentSky border border-white/10">
                   <FaEdit className="w-3.5 h-3.5" />
                 </button>
-                <button onClick={() => handleDelete(proj.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20">
+                <button onClick={() => handleDelete(proj._id || proj.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20">
                   <FaTrash className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -240,7 +241,7 @@ export const ManageProjects = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Tech Stack (comma separated)</label>
-              <input type="text" value={formData.tags} onChange={(e) => setFormData({ ...formData, tags: e.target.value })} placeholder="React.js, Node.js, MySQL" className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight" />
+              <input type="text" value={formData.tags} onChange={(e) => setFormData({ ...formData, tags: e.target.value })} placeholder="React.js, Node.js, MongoDB" className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight" />
             </div>
 
             <div>
@@ -251,7 +252,7 @@ export const ManageProjects = () => {
 
           <div>
             <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Key Features (one per line)</label>
-            <textarea rows="3" value={formData.features} onChange={(e) => setFormData({ ...formData, features: e.target.value })} placeholder="Automated mentee mapping&#10;Role-based access control" className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight resize-none font-mono" />
+            <textarea rows="3" value={formData.features} onChange={(e) => setFormData({ ...formData, features: e.target.value })} placeholder="Role-based access control&#10;Real-time dashboard" className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight resize-none font-mono" />
           </div>
 
           <div>
@@ -271,9 +272,20 @@ export const ManageProjects = () => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Project Preview Image</label>
-            <input type="file" accept="image/*" onChange={(e) => setSelectedFile(e.target.files[0])} className="w-full text-xs text-textMuted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-mono file:bg-primaryBlue file:text-white hover:file:bg-blue-600 cursor-pointer" />
+          {/* Image Upload & Direct Image URL Input */}
+          <div className="space-y-2 border-t border-white/10 pt-3">
+            <label className="block text-xs font-mono text-textMuted uppercase">Project Preview Image</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+              <div>
+                <span className="text-[11px] font-mono text-textMuted block mb-1">Option A: Upload File</span>
+                <input type="file" accept="image/*" onChange={(e) => setSelectedFile(e.target.files[0])} className="w-full text-xs text-textMuted file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-mono file:bg-primaryBlue file:text-white hover:file:bg-blue-600 cursor-pointer" />
+              </div>
+
+              <div>
+                <span className="text-[11px] font-mono text-textMuted block mb-1">Option B: Direct Image URL</span>
+                <input type="text" value={formData.image_url} onChange={(e) => setFormData({ ...formData, image_url: e.target.value })} placeholder="https://example.com/project.png or /assets/..." className="w-full px-3 py-1.5 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight font-mono" />
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center gap-6 pt-2">
