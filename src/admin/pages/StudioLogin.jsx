@@ -20,6 +20,9 @@ export const StudioLogin = () => {
     try {
       const res = await api.post('/auth/login', { username, password });
       if (res.data && res.data.success) {
+        if (res.data.token) {
+          localStorage.setItem('studio_token', res.data.token);
+        }
         navigate('/studio/dashboard');
       }
     } catch (err) {
@@ -59,36 +62,30 @@ export const StudioLogin = () => {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-mono text-textMuted mb-1.5 uppercase">
-              Administrator Username
-            </label>
+            <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Username / Email</label>
             <div className="relative">
-              <FaUser className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-textMuted" />
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="gowtham_admin"
                 required
-                className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight placeholder-textMuted/50 focus:outline-none focus:border-accentSky/60 transition-colors font-body"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-surfaceDark border border-white/10 text-xs font-body text-textLight focus:outline-none focus:border-accentSky/60"
               />
+              <FaUser className="w-3.5 h-3.5 text-textMuted absolute left-3.5 top-3.5" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-mono text-textMuted mb-1.5 uppercase">
-              Password
-            </label>
+            <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Master Password</label>
             <div className="relative">
-              <FaLock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-textMuted" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
                 required
-                className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight placeholder-textMuted/50 focus:outline-none focus:border-accentSky/60 transition-colors font-body"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-surfaceDark border border-white/10 text-xs font-body text-textLight focus:outline-none focus:border-accentSky/60"
               />
+              <FaLock className="w-3.5 h-3.5 text-textMuted absolute left-3.5 top-3.5" />
             </div>
           </div>
 
@@ -104,9 +101,9 @@ export const StudioLogin = () => {
           </Button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-white/10 text-center">
+        <div className="mt-6 pt-4 border-t border-white/10 text-center">
           <p className="text-[11px] font-mono text-textMuted">
-            Protected Area &bull; Restricted to Authorized Administrator
+            Protected Admin Route &bull; JWT Token Encrypted
           </p>
         </div>
       </motion.div>

@@ -32,11 +32,11 @@ export const login = async (req, res) => {
 
     const token = generateToken({ id: admin.id, username: admin.username, role: admin.role });
 
-    // Set HTTP-Only cookie
+    // Set cross-site compatible cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 
@@ -60,17 +60,18 @@ export const login = async (req, res) => {
   }
 };
 
-export const logout = async (req, res) => {
-  if (req.user) {
-    await logActivity(req, 'LOGOUT', 'Auth', `Admin ${req.user.username} logged out`);
-  }
-  res.clearCookie('token');
-  return res.status(200).json({ success: true, message: 'Logged out successfully.' });
-};
-
-export const checkMe = (req, res) => {
+export const getMe = async (req, res) => {
   return res.status(200).json({
     success: true,
     user: req.user
   });
+};
+
+export const logout = async (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+  });
+  return res.status(200).json({ success: true, message: 'Logged out successfully.' });
 };
