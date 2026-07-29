@@ -11,6 +11,8 @@ import { Section } from '../common/Section';
 import { SectionHeader } from '../common/SectionHeader';
 import { Button } from '../common/Button';
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+
 export const Contact = () => {
   const { about } = usePortfolio();
   const formRef = useRef(null);
@@ -39,7 +41,7 @@ export const Contact = () => {
     setLoading(true);
     try {
       // 1. Post to backend API so it lands in Studio Inbox
-      await axios.post('http://localhost:5000/api/admin/messages', formData).catch(() => {});
+      await axios.post(`${API_BASE_URL}/api/admin/messages`, formData).catch(() => {});
 
       // 2. EmailJS dispatch
       await emailjs.sendForm(
