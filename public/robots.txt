@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gowthamg.dev/sitemap.xml
+Sitemap: https://itsgowtham.vercel.app/sitemap.xml
