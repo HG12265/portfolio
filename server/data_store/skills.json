@@ -99,17 +99,6 @@
     "enabled": true
   },
   {
-    "id": 10,
-    "name": "Java",
-    "category": "programming",
-    "icon_name": "FaJava",
-    "proficiency": "Intermediate",
-    "color": "#007396",
-    "description": "Core Java fundamentals, OOP concepts, collections.",
-    "display_order": 10,
-    "enabled": true
-  },
-  {
     "id": 11,
     "name": "MySQL",
     "category": "database",
@@ -217,17 +206,6 @@
     "color": "#007ACC",
     "description": "Primary IDE, debugging, extension configuration.",
     "display_order": 20,
-    "enabled": true
-  },
-  {
-    "id": 21,
-    "name": "npm",
-    "category": "tools",
-    "icon_name": "FaNpm",
-    "proficiency": "Advanced",
-    "color": "#CB3837",
-    "description": "Node Package Manager, dependency installation.",
-    "display_order": 21,
     "enabled": true
   }
 ]
