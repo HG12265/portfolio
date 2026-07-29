@@ -71,8 +71,8 @@ export const ManageSkills = () => {
   const handleOpenEdit = (skill) => {
     setEditingSkill(skill);
     setFormData({
-      name: skill.name,
-      category: skill.category,
+      name: skill.name || '',
+      category: skill.category || 'frontend',
       icon_name: skill.icon_name || 'FaCode',
       proficiency: skill.proficiency || 'Advanced',
       color: skill.color || '#38BDF8',
@@ -97,8 +97,9 @@ export const ManageSkills = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      if (editingSkill) {
-        await api.put(`/admin/skills/${editingSkill.id}`, formData);
+      const targetId = editingSkill ? (editingSkill._id || editingSkill.id) : null;
+      if (targetId) {
+        await api.put(`/admin/skills/${targetId}`, formData);
       } else {
         await api.post('/admin/skills', formData);
       }
@@ -113,8 +114,8 @@ export const ManageSkills = () => {
 
   const filteredSkills = skills.filter((s) => {
     const matchesCat = categoryFilter === 'all' || s.category === categoryFilter;
-    const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          s.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (s.description || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCat && matchesSearch;
   });
 
@@ -139,10 +140,10 @@ export const ManageSkills = () => {
             <button
               key={c.id}
               onClick={() => setCategoryFilter(c.id)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 ${
                 categoryFilter === c.id
-                  ? 'bg-primaryBlue text-white shadow-md'
-                  : 'bg-surfaceDark text-textMuted hover:text-textLight border border-white/10'
+                  ? 'bg-accentSky text-black font-semibold shadow-md'
+                  : 'bg-white/5 text-textMuted hover:bg-white/10 hover:text-textLight'
               }`}
             >
               {c.label}
@@ -151,10 +152,10 @@ export const ManageSkills = () => {
         </div>
 
         <div className="relative w-full md:w-64">
-          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-textMuted" />
+          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-textMuted w-3.5 h-3.5" />
           <input
             type="text"
-            placeholder="Search skills..."
+            placeholder="Search technology..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight focus:outline-none focus:border-accentSky/60 font-body"
@@ -177,54 +178,57 @@ export const ManageSkills = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 text-xs font-body">
-              {filteredSkills.map((skill) => (
-                <tr key={skill.id} className="hover:bg-white/5 transition-colors">
-                  <td className="py-3.5 px-4 font-mono text-textMuted">{skill.display_order}</td>
-                  <td className="py-3.5 px-4 font-semibold text-textLight">
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: skill.color || '#38BDF8' }} />
-                      <span>{skill.name}</span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 font-mono text-accentSky uppercase text-[11px]">{skill.category}</td>
-                  <td className="py-3.5 px-4">
-                    <Badge variant={skill.proficiency === 'Advanced' ? 'primary' : 'default'} size="xs">
-                      {skill.proficiency}
-                    </Badge>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${skill.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
-                      {skill.enabled ? 'Enabled' : 'Disabled'}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => handleOpenEdit(skill)} className="p-2 rounded-lg bg-white/5 border border-white/10 hover:text-accentSky">
-                        <FaEdit className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={() => handleDelete(skill.id)} className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20">
-                        <FaTrash className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {filteredSkills.map((skill) => {
+                const skillId = skill._id || skill.id;
+                return (
+                  <tr key={skillId} className="hover:bg-white/5 transition-colors">
+                    <td className="py-3.5 px-4 font-mono text-textMuted">{skill.display_order}</td>
+                    <td className="py-3.5 px-4 font-semibold text-textLight">
+                      <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: skill.color || '#38BDF8' }} />
+                        <span>{skill.name}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 font-mono text-accentSky uppercase text-[11px]">{skill.category}</td>
+                    <td className="py-3.5 px-4">
+                      <Badge variant={skill.proficiency === 'Advanced' ? 'primary' : 'default'} size="xs">
+                        {skill.proficiency}
+                      </Badge>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${skill.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                        {skill.enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button onClick={() => handleOpenEdit(skill)} className="p-2 rounded-lg bg-white/5 hover:text-accentSky border border-white/10" title="Edit">
+                          <FaEdit className="w-3.5 h-3.5" />
+                        </button>
+                        <button onClick={() => handleDelete(skillId)} className="p-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20" title="Delete">
+                          <FaTrash className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
 
       {/* Add / Edit Skill Modal */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingSkill ? 'Edit Skill' : 'Add New Technology'}>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingSkill ? 'Edit Skill' : 'Add New Technology'} maxWidth="max-w-md">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Technology Name *</label>
-              <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight" />
-            </div>
+          <div>
+            <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Technology Name *</label>
+            <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight" />
+          </div>
 
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Category *</label>
+              <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Category</label>
               <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight">
                 <option value="frontend">Frontend</option>
                 <option value="backend">Backend</option>
@@ -234,37 +238,28 @@ export const ManageSkills = () => {
                 <option value="tools">Tools</option>
               </select>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Proficiency Level</label>
+              <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Proficiency</label>
               <select value={formData.proficiency} onChange={(e) => setFormData({ ...formData, proficiency: e.target.value })} className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight">
                 <option value="Advanced">Advanced</option>
                 <option value="Intermediate">Intermediate</option>
                 <option value="Basic">Basic</option>
               </select>
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Accent Color Hex</label>
-              <input type="text" value={formData.color} onChange={(e) => setFormData({ ...formData, color: e.target.value })} className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight" />
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Display Order</label>
-              <input type="number" value={formData.display_order} onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })} className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight" />
+          <div>
+            <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Brand / Hex Color</label>
+            <div className="flex items-center gap-2">
+              <input type="color" value={formData.color} onChange={(e) => setFormData({ ...formData, color: e.target.value })} className="w-8 h-8 rounded border-0 bg-transparent cursor-pointer" />
+              <input type="text" value={formData.color} onChange={(e) => setFormData({ ...formData, color: e.target.value })} className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight font-mono" />
             </div>
           </div>
 
           <div>
             <label className="block text-xs font-mono text-textMuted mb-1 uppercase">Short Description</label>
-            <input type="text" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="e.g. Component architecture, custom hooks, state management." className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight" />
-          </div>
-
-          <div className="flex items-center gap-2 pt-2">
-            <input type="checkbox" id="enabledCheck" checked={formData.enabled} onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })} className="rounded bg-surfaceDark border-white/10" />
-            <label htmlFor="enabledCheck" className="text-xs font-body text-textLight">Enable skill on public website</label>
+            <textarea rows="2" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full px-3.5 py-2 rounded-lg bg-surfaceDark border border-white/10 text-xs text-textLight resize-none" />
           </div>
 
           <div className="pt-4 flex justify-end gap-3 border-t border-white/10">

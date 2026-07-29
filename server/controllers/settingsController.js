@@ -1,17 +1,17 @@
-import { getDb, readJsonStore, writeJsonStore } from '../config/db.js';
+import Setting from '../models/Setting.js';
+import { readJsonStore, writeJsonStore } from '../config/db.js';
 import { logActivity } from '../middleware/auditMiddleware.js';
 
 export const getSettings = async (req, res) => {
   try {
-    const { pool, isMysqlConnected } = getDb();
     let settingsMap = {};
 
-    if (isMysqlConnected && pool) {
-      const [rows] = await pool.query('SELECT * FROM settings');
-      rows.forEach(r => {
-        settingsMap[r.key_name] = r.value_text;
+    try {
+      const store = await Setting.find().lean();
+      store.forEach(s => {
+        settingsMap[s.key_name] = s.value_text;
       });
-    } else {
+    } catch {
       const store = readJsonStore('settings');
       store.forEach(s => {
         settingsMap[s.key_name] = s.value_text;
@@ -36,16 +36,16 @@ export const getSettings = async (req, res) => {
 export const updateSettings = async (req, res) => {
   try {
     const settingsObj = req.body; // Key-value object
-    const { pool, isMysqlConnected } = getDb();
 
-    if (isMysqlConnected && pool) {
+    try {
       for (const [key, val] of Object.entries(settingsObj)) {
-        await pool.query(
-          'INSERT INTO settings (key_name, value_text) VALUES (?, ?) ON DUPLICATE KEY UPDATE value_text = ?',
-          [key, String(val), String(val)]
+        await Setting.findOneAndUpdate(
+          { key_name: key },
+          { key_name: key, value_text: String(val) },
+          { upsert: true, new: true }
         );
       }
-    } else {
+    } catch {
       let store = readJsonStore('settings');
       for (const [key, val] of Object.entries(settingsObj)) {
         const found = store.find(s => s.key_name === key);
@@ -58,7 +58,7 @@ export const updateSettings = async (req, res) => {
       writeJsonStore('settings', store);
     }
 
-    await logActivity(req, 'UPDATE', 'Settings', 'Updated SEO metadata and website configuration settings');
+    await logActivity(req, 'UPDATE', 'Settings', 'Updated global site settings');
     return res.status(200).json({ success: true, message: 'Settings updated successfully.' });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });
