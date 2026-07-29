@@ -1,52 +1,47 @@
 export const certificatesData = [
   {
-    id: 'fullstack-cert',
+    id: 1,
     title: 'Full Stack Web Development Professional',
-    issuer: 'Coursera / Meta / Professional Tech Academy',
-    year: '2025',
-    credentialId: 'CERT-FS-98421',
-    image: '/assets/mentor-mentee.png',
-    description: 'Comprehensive program covering end-to-end web application development with React, Node.js, Express, MySQL, REST APIs, and cloud deployment workflows.',
-    verifyUrl: 'https://coursera.org/verify/FS-98421'
+    organization: 'Coursera / Meta',
+    duration: '2025',
+    description: 'Comprehensive validation of full stack web application development using React, Node.js, Express, and MySQL.',
+    image_url: '/assets/mentor-mentee.png',
+    display_order: 1
   },
   {
-    id: 'react-cert',
+    id: 2,
     title: 'React Developer Specialist',
-    issuer: 'Meta Frontend Developer Program',
-    year: '2024',
-    credentialId: 'CERT-REACT-44102',
-    image: '/assets/dept-portal.png',
-    description: 'Advanced validation of React skills including Component Architecture, Custom Hooks, State Management, and Performance Optimization.',
-    verifyUrl: 'https://coursera.org/verify/REACT-44102'
+    organization: 'Meta Frontend Developer Program',
+    duration: '2024',
+    description: 'Advanced certification in React component architecture, state management, custom hooks, and UI performance.',
+    image_url: '/assets/dept-portal.png',
+    display_order: 2
   },
   {
-    id: 'webdev-cert',
+    id: 3,
     title: 'Web Application Development Certification',
-    issuer: 'FreeCodeCamp / Developer Academy',
-    year: '2025',
-    credentialId: 'CERT-WEB-77192',
-    image: '/assets/online-exam.png',
-    description: 'Practical training on modern web application interfaces, responsive layout design, JavaScript ES6+, and API integration.',
-    verifyUrl: 'https://freecodecamp.org/verify/WEB-77192'
+    organization: 'FreeCodeCamp / Tech Academy',
+    duration: '2025',
+    description: 'Practical training in responsive web design, ES6+ JavaScript standards, RESTful APIs, and frontend integration.',
+    image_url: '/assets/online-exam.png',
+    display_order: 3
   },
   {
-    id: 'cloud-cert',
+    id: 4,
     title: 'Cloud Hosting & Deployment Essentials',
-    issuer: 'AWS Academy / Vercel Developer Network',
-    year: '2024',
-    credentialId: 'CERT-CLOUD-33981',
-    image: '/assets/election-sys.png',
-    description: 'Fundamentals of cloud hosting, serverless deployments, domain routing, SSL configuration, and web application management.',
-    verifyUrl: 'https://aws.amazon.com/verify/CLOUD-33981'
+    organization: 'AWS Academy / Vercel',
+    duration: '2024',
+    description: 'Fundamentals of cloud server configuration, serverless deployments, domain routing, and web service management.',
+    image_url: '/assets/election-sys.png',
+    display_order: 4
   },
   {
-    id: 'sql-cert',
+    id: 5,
     title: 'Database Design & MySQL Specialist',
-    issuer: 'Oracle Academy / HackerRank',
-    year: '2024',
-    credentialId: 'CERT-SQL-55109',
-    image: '/assets/phd-portal.png',
-    description: 'Expertise in relational database schema design, complex multi-table SQL queries, indexing, and database performance optimization.',
-    verifyUrl: 'https://hackerrank.com/certificates/SQL-55109'
+    organization: 'Oracle Academy / HackerRank',
+    duration: '2024',
+    description: 'Relational database schema design, complex multi-table SQL queries, indexing, and performance tuning.',
+    image_url: '/assets/phd-portal.png',
+    display_order: 5
   }
 ];

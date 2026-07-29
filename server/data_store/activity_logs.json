@@ -1,45 +1,5 @@
 [
   {
-    "id": 1785293836853,
-    "admin_id": 1,
-    "admin_name": "gowtham_admin",
-    "action": "LOGIN",
-    "module": "Auth",
-    "details": "Admin gowtham_admin logged into Studio",
-    "ip_address": "::1",
-    "created_at": "2026-07-29T02:57:16.853Z"
-  },
-  {
-    "id": 1785293804476,
-    "admin_id": 1,
-    "admin_name": "gowtham_admin",
-    "action": "DELETE",
-    "module": "Skills",
-    "details": "Deleted skill ID: 10",
-    "ip_address": "::1",
-    "created_at": "2026-07-29T02:56:44.476Z"
-  },
-  {
-    "id": 1785293798583,
-    "admin_id": 1,
-    "admin_name": "gowtham_admin",
-    "action": "DELETE",
-    "module": "Skills",
-    "details": "Deleted skill ID: 21",
-    "ip_address": "::1",
-    "created_at": "2026-07-29T02:56:38.583Z"
-  },
-  {
-    "id": 1785293663238,
-    "admin_id": 1,
-    "admin_name": "gowtham_admin",
-    "action": "LOGIN",
-    "module": "Auth",
-    "details": "Admin gowtham_admin logged into Studio",
-    "ip_address": "::1",
-    "created_at": "2026-07-29T02:54:23.238Z"
-  },
-  {
     "id": 1,
     "admin_id": 1,
     "admin_name": "gowtham_admin",
@@ -47,6 +7,6 @@
     "module": "System",
     "details": "Initialized Portfolio CMS Database & Admin Studio",
     "ip_address": "127.0.0.1",
-    "created_at": "2026-07-29T02:48:33.727Z"
+    "created_at": "2026-07-29T06:36:39.782Z"
   }
 ]

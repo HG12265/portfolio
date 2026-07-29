@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaTimes } from 'react-icons/fa';
-import { skillsData, skillCategories } from '../../data/skillsData';
+import { usePortfolio } from '../../context/PortfolioContext';
 import { Section } from '../common/Section';
 import { SectionHeader } from '../common/SectionHeader';
 import { Badge } from '../common/Badge';
 
 export const Skills = () => {
+  const { skills } = usePortfolio();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredSkills = skillsData.filter((skill) => {
+  const skillCategories = [
+    { id: 'all', name: 'All Stack' },
+    { id: 'frontend', name: 'Frontend' },
+    { id: 'backend', name: 'Backend' },
+    { id: 'programming', name: 'Programming' },
+    { id: 'database', name: 'Database' },
+    { id: 'hosting', name: 'Hosting & Deployment' },
+    { id: 'tools', name: 'Tools' },
+  ];
+
+  const filteredSkills = skills.filter((skill) => {
+    if (skill.enabled === false) return false;
     const matchesCategory = activeCategory === 'all' || skill.category === activeCategory;
     const matchesSearch = skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          skill.description.toLowerCase().includes(searchQuery.toLowerCase());
+                          (skill.description && skill.description.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
@@ -67,54 +79,47 @@ export const Skills = () => {
       </div>
 
       {/* Skills Grid */}
-      <motion.div 
-        layout
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-      >
-        <AnimatePresence>
-          {filteredSkills.map((skill, index) => {
-            const Icon = skill.icon;
-            return (
-              <motion.div
-                key={skill.name}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.25, delay: index * 0.03 }}
-                className="glass-card p-5 rounded-xl flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Icon className="w-5 h-5" style={{ color: skill.color }} />
-                    </div>
-                    <Badge 
-                      variant={skill.proficiency === 'Advanced' ? 'primary' : 'default'}
-                      size="xs"
-                    >
-                      {skill.proficiency}
-                    </Badge>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <AnimatePresence mode="popLayout">
+          {filteredSkills.map((skill, index) => (
+            <motion.div
+              key={skill.id || index}
+              layout
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.25, delay: index * 0.03 }}
+              className="glass-card p-5 rounded-xl border border-white/10 hover:border-accentSky/40 transition-all duration-300 group flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm"
+                      style={{ backgroundColor: skill.color || '#38BDF8' }}
+                    />
+                    <h3 className="text-base font-bold font-heading text-textLight group-hover:text-accentSky transition-colors">
+                      {skill.name}
+                    </h3>
                   </div>
-
-                  <h3 className="text-base font-bold font-heading text-textLight group-hover:text-accentSky transition-colors">
-                    {skill.name}
-                  </h3>
-                  <p className="text-xs text-textMuted font-body mt-1.5 leading-relaxed">
-                    {skill.description}
-                  </p>
+                  <Badge variant={skill.proficiency === 'Advanced' ? 'primary' : 'default'} size="xs">
+                    {skill.proficiency || 'Advanced'}
+                  </Badge>
                 </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </motion.div>
+                <p className="text-textMuted text-xs font-body leading-relaxed line-clamp-2">
+                  {skill.description}
+                </p>
+              </div>
 
-      {filteredSkills.length === 0 && (
-        <div className="text-center py-12 text-textMuted text-sm font-mono">
-          No matching skills found for "{searchQuery}".
-        </div>
-      )}
+              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase text-accentSky tracking-wider">
+                  {skill.category}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
     </Section>
   );
 };

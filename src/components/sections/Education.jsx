@@ -1,25 +1,27 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaGraduationCap, FaBookOpen, FaAward, FaStar } from 'react-icons/fa';
-import { educationData } from '../../data/educationData';
+import { FaGraduationCap, FaBookOpen } from 'react-icons/fa';
+import { usePortfolio } from '../../context/PortfolioContext';
 import { Section } from '../common/Section';
 import { SectionHeader } from '../common/SectionHeader';
 import { Badge } from '../common/Badge';
 
 export const Education = () => {
+  const { education } = usePortfolio();
+
   return (
     <Section id="education" className="bg-slate-900/40">
       <SectionHeader
         badge="Academic Roadmap"
         title="Education & Academic"
-        highlightTitle="Excellence"
-        subtitle="Formal academic degrees, specialization coursework, and future continuous learning goals."
+        highlightTitle="Journey"
+        subtitle="Formal academic degrees, specialization coursework, and continuous learning goals."
       />
 
       <div className="max-w-4xl mx-auto space-y-8">
-        {educationData.map((edu, index) => (
+        {education.map((edu, index) => (
           <motion.div
-            key={edu.id}
+            key={edu.id || index}
             initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-50px' }}
@@ -46,7 +48,7 @@ export const Education = () => {
 
               <div className="flex items-center gap-2">
                 <Badge variant="accent">{edu.period}</Badge>
-                <Badge variant="primary">{edu.grade}</Badge>
+                {edu.grade && <Badge variant="primary">{edu.grade}</Badge>}
               </div>
             </div>
 
@@ -55,22 +57,23 @@ export const Education = () => {
             </p>
 
             {/* Courses / Modules Grid */}
-            <div>
-              <h4 className="text-xs font-mono uppercase text-accentSky mb-3 flex items-center gap-2">
-                <FaBookOpen className="w-3.5 h-3.5" /> Key Focus Courses & Specializations
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                {edu.courses.map((course, idx) => (
-                  <div
-                    key={idx}
-                    className="p-2.5 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2 text-xs font-body text-textLight"
-                  >
-                    <FaStar className="w-3 h-3 text-amber-400 shrink-0" />
-                    <span className="truncate">{course}</span>
-                  </div>
-                ))}
+            {edu.courses && edu.courses.length > 0 && (
+              <div>
+                <h4 className="text-xs font-mono uppercase text-accentSky mb-3 flex items-center gap-2">
+                  <FaBookOpen className="w-3.5 h-3.5" /> Key Focus Courses & Specializations
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {(edu.courses || []).map((course, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-textLight"
+                    >
+                      {course}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </motion.div>
         ))}
       </div>

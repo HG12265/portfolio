@@ -5,6 +5,13 @@ import { Button } from '../../components/common/Button';
 import { Modal } from '../../components/common/Modal';
 import { Badge } from '../../components/common/Badge';
 
+const formatImageUrl = (url) => {
+  if (!url) return '/assets/mentor-mentee.png';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
+  return url;
+};
+
 export const ManageProjects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,8 +69,8 @@ export const ManageProjects = () => {
       features: 'Role-based authentication, Interactive dashboard, RESTful APIs',
       architecture: 'Decoupled MERN stack architecture.',
       role: 'Full Stack Developer',
-      duration: '2 Months',
-      github_url: 'https://github.com/gowthamg-dev',
+      duration: 'Production System',
+      github_url: 'https://github.com/example/repository',
       demo_url: 'https://demo.vercel.app',
       featured: false,
       published: true,
@@ -166,7 +173,7 @@ export const ManageProjects = () => {
           <div key={proj.id} className="glass-card rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-between">
             <div>
               <div className="relative aspect-video bg-surfaceDark overflow-hidden">
-                <img src={proj.image_url} alt={proj.title} className="w-full h-full object-cover" />
+                <img src={formatImageUrl(proj.image_url)} alt={proj.title} className="w-full h-full object-cover" />
                 <div className="absolute top-3 left-3 flex gap-2">
                   <Badge variant="primary" size="xs">{proj.category}</Badge>
                   {proj.featured && <Badge variant="warning" size="xs">Featured</Badge>}

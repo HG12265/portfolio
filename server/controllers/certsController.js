@@ -6,9 +6,15 @@ export const getCertificates = async (req, res) => {
     const { pool, isMysqlConnected } = getDb();
     if (isMysqlConnected && pool) {
       const [rows] = await pool.query('SELECT * FROM certificates ORDER BY display_order ASC, id DESC');
-      return res.status(200).json({ success: true, data: rows });
+      const mapped = rows.map(r => ({
+        ...r,
+        organization: r.organization || r.issuer || '',
+        duration: r.duration || r.year || ''
+      }));
+      return res.status(200).json({ success: true, data: mapped });
     }
     const certs = readJsonStore('certificates');
+    certs.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
     return res.status(200).json({ success: true, data: certs });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });
@@ -17,15 +23,18 @@ export const getCertificates = async (req, res) => {
 
 export const createCertificate = async (req, res) => {
   try {
-    const { title, issuer, year, credential_id, description, verify_url, display_order } = req.body;
+    const { title, organization, duration, description, display_order } = req.body;
     let image_url = req.file ? `/uploads/${req.file.filename}` : (req.body.image_url || '/assets/mentor-mentee.png');
+
+    const orgVal = organization || '';
+    const durVal = duration || '';
 
     const { pool, isMysqlConnected } = getDb();
 
     if (isMysqlConnected && pool) {
       const [result] = await pool.query(
-        'INSERT INTO certificates (title, issuer, year, credential_id, image_url, description, verify_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        [title, issuer, year, credential_id, image_url, description, verify_url, display_order || 0]
+        'INSERT INTO certificates (title, organization, issuer, duration, year, image_url, description, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [title, orgVal, orgVal, durVal, durVal, image_url, description || '', display_order || 0]
       );
       await logActivity(req, 'CREATE', 'Certificates', `Added certificate: ${title}`);
       return res.status(201).json({ success: true, message: 'Certificate created successfully.', id: result.insertId });
@@ -33,7 +42,13 @@ export const createCertificate = async (req, res) => {
       const certs = readJsonStore('certificates');
       const newCert = {
         id: Date.now(),
-        title, issuer, year, credential_id, image_url, description, verify_url,
+        title,
+        organization: orgVal,
+        issuer: orgVal,
+        duration: durVal,
+        year: durVal,
+        image_url,
+        description: description || '',
         display_order: display_order || certs.length + 1,
         created_at: new Date().toISOString()
       };
@@ -50,14 +65,17 @@ export const createCertificate = async (req, res) => {
 export const updateCertificate = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, issuer, year, credential_id, description, verify_url, display_order } = req.body;
+    const { title, organization, duration, description, display_order } = req.body;
     let image_url = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
+
+    const orgVal = organization || '';
+    const durVal = duration || '';
 
     const { pool, isMysqlConnected } = getDb();
 
     if (isMysqlConnected && pool) {
-      let query = 'UPDATE certificates SET title=?, issuer=?, year=?, credential_id=?, description=?, verify_url=?, display_order=?';
-      let params = [title, issuer, year, credential_id, description, verify_url, display_order];
+      let query = 'UPDATE certificates SET title=?, organization=?, issuer=?, duration=?, year=?, description=?, display_order=?';
+      let params = [title, orgVal, orgVal, durVal, durVal, description || '', display_order || 0];
       if (image_url) {
         query += ', image_url=?';
         params.push(image_url);
@@ -72,7 +90,13 @@ export const updateCertificate = async (req, res) => {
         if (c.id == id) {
           return {
             ...c,
-            title, issuer, year, credential_id, description, verify_url, display_order,
+            title,
+            organization: orgVal || c.organization || c.issuer,
+            issuer: orgVal || c.issuer,
+            duration: durVal || c.duration || c.year,
+            year: durVal || c.year,
+            description: description !== undefined ? description : c.description,
+            display_order: display_order || c.display_order,
             image_url: image_url || c.image_url,
             updated_at: new Date().toISOString()
           };

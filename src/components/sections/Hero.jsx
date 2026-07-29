@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaArrowRight, FaCode, FaCheckCircle } from 'react-icons/fa';
-import { developerInfo } from '../../data/developerInfo';
+import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaEnvelope, FaArrowRight, FaCheckCircle, FaFileDownload } from 'react-icons/fa';
+import { usePortfolio } from '../../context/PortfolioContext';
 import { Container } from '../common/Container';
 import { Button } from '../common/Button';
 
 export const Hero = () => {
+  const { about, resumeUrl } = usePortfolio();
   const [roleIndex, setRoleIndex] = useState(0);
+
+  const roles = [
+    'Full Stack Developer',
+    'React Developer',
+    'Backend Developer',
+    'MCA Student',
+    'Web Application Specialist'
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % developerInfo.roles.length);
+      setRoleIndex((prev) => (prev + 1) % roles.length);
     }, 2800);
     return () => clearInterval(interval);
-  }, []);
+  }, [roles.length]);
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -23,6 +32,8 @@ export const Hero = () => {
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
+
+  const profileImageSrc = about.profile_image_url || '/assets/gowtham-profile.png';
 
   return (
     <section
@@ -53,7 +64,7 @@ export const Hero = () => {
           {/* Name & Title */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-heading text-textLight">
             Hi, I'm{' '}
-            <span className="text-gradient-blue">{developerInfo.name}</span>
+            <span className="text-gradient-blue">{about.name || 'GOWTHAM G'}</span>
           </h1>
 
           {/* Animated Role Rotator */}
@@ -70,14 +81,14 @@ export const Hero = () => {
                 transition={{ duration: 0.35 }}
                 className="text-xl sm:text-2xl font-bold font-heading text-accentSky border-b-2 border-accentSky/40 pb-0.5"
               >
-                {developerInfo.roles[roleIndex]}
+                {roles[roleIndex]}
               </motion.span>
             </AnimatePresence>
           </div>
 
           {/* Tagline / Summary Paragraph */}
           <p className="mt-6 text-base sm:text-lg text-textMuted font-body leading-relaxed max-w-2xl">
-            {developerInfo.tagline}
+            {about.tagline || about.bio || 'Building modern, scalable, and user-centric web applications with clean architecture and intuitive user experiences.'}
           </p>
 
           {/* CTAs */}
@@ -95,8 +106,10 @@ export const Hero = () => {
             <Button
               variant="outline"
               size="lg"
-              href={developerInfo.resumeUrl}
+              href={resumeUrl || '/assets/resume-gowtham-g.pdf'}
               target="_blank"
+              download="GOWTHAM_G_Resume.pdf"
+              icon={FaFileDownload}
             >
               Download Resume
             </Button>
@@ -110,28 +123,60 @@ export const Hero = () => {
             </Button>
           </div>
 
-          {/* Social Quick Links */}
-          <div className="mt-10 flex items-center gap-6 pt-6 border-t border-white/10 w-full max-w-lg">
+          {/* Dynamic Social Media Links */}
+          <div className="mt-10 flex flex-wrap items-center gap-6 pt-6 border-t border-white/10 w-full max-w-xl">
             <span className="text-xs font-mono text-textMuted uppercase tracking-wider">
               Connect:
             </span>
-            <div className="flex items-center gap-4">
-              <a
-                href={developerInfo.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
-              >
-                <FaGithub className="w-4 h-4" /> GitHub
-              </a>
-              <a
-                href={developerInfo.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
-              >
-                <FaLinkedin className="w-4 h-4" /> LinkedIn
-              </a>
+            <div className="flex flex-wrap items-center gap-4">
+              {about.github_url && (
+                <a
+                  href={about.github_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
+                >
+                  <FaGithub className="w-4 h-4" /> GitHub
+                </a>
+              )}
+              {about.linkedin_url && (
+                <a
+                  href={about.linkedin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
+                >
+                  <FaLinkedin className="w-4 h-4" /> LinkedIn
+                </a>
+              )}
+              {about.twitter_url && (
+                <a
+                  href={about.twitter_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
+                >
+                  <FaTwitter className="w-4 h-4" /> Twitter
+                </a>
+              )}
+              {about.instagram_url && (
+                <a
+                  href={about.instagram_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
+                >
+                  <FaInstagram className="w-4 h-4" /> Instagram
+                </a>
+              )}
+              {about.email && (
+                <a
+                  href={`mailto:${about.email}`}
+                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
+                >
+                  <FaEnvelope className="w-4 h-4" /> Mail
+                </a>
+              )}
             </div>
           </div>
         </motion.div>
@@ -141,66 +186,38 @@ export const Hero = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="lg:col-span-5 flex justify-center relative"
+          className="lg:col-span-5 relative flex justify-center"
         >
           <div className="relative w-full max-w-md">
-            {/* Soft backdrop glow card */}
-            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-tr from-primaryBlue via-accentSky to-blue-600 opacity-30 blur-xl animate-pulse-glow" />
+            {/* Outer Decorative Gradient Border */}
+            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-primaryBlue via-accentSky to-primaryBlue opacity-40 blur-md hover:opacity-100 transition duration-1000 animate-pulse" />
 
-            {/* Main Image Container */}
-            <div className="relative glass-card p-3 rounded-3xl border border-white/15 overflow-hidden">
-              <img
-                src="/assets/profile.png"
-                alt="Gowtham G - Profile"
-                className="w-full h-[400px] sm:h-[450px] object-cover object-top rounded-2xl bg-surfaceDark"
-                loading="eager"
-              />
+            {/* Profile Card Frame */}
+            <div className="relative glass-card p-6 sm:p-8 rounded-3xl border border-white/10 bg-surfaceDark/90 backdrop-blur-xl">
+              <div className="relative aspect-square rounded-2xl overflow-hidden mb-6 border border-white/10 group bg-slate-800 flex items-center justify-center">
+                <img
+                  src={profileImageSrc}
+                  alt={about.name || 'GOWTHAM G'}
+                  onError={(e) => {
+                    e.currentTarget.src = '/assets/profile.png';
+                  }}
+                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-bgDark/70 via-transparent to-transparent pointer-events-none" />
+              </div>
 
-              {/* Overlay Glass Tag */}
-              <div className="absolute bottom-6 left-6 right-6 p-4 rounded-xl glass-panel border border-white/15 flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-bold font-heading text-textLight">
-                    Gowtham G
-                  </h3>
-                  <p className="text-xs font-mono text-accentSky">
-                    MCA Scholar & Full Stack Dev
-                  </p>
+              {/* Quick Highlight Pills */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 text-xs font-body text-textLight">
+                  <FaCheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>React.js, Node.js & MySQL Specialist</span>
                 </div>
-                <div className="w-9 h-9 rounded-lg bg-primaryBlue/20 border border-primaryBlue/40 flex items-center justify-center text-accentSky">
-                  <FaCode className="w-4 h-4" />
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 text-xs font-body text-textLight">
+                  <FaCheckCircle className="w-4 h-4 text-accentSky shrink-0" />
+                  <span>Periyar University MCA Student</span>
                 </div>
               </div>
             </div>
-
-            {/* Floating Metric Pill 1 */}
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute -top-4 -left-4 px-4 py-2.5 rounded-xl glass-panel border border-white/15 shadow-xl flex items-center gap-3 hidden sm:flex"
-            >
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                <FaCheckCircle className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-[11px] font-mono text-textMuted uppercase">Projects</p>
-                <p className="text-xs font-bold font-heading text-textLight">6+ Enterprise Built</p>
-              </div>
-            </motion.div>
-
-            {/* Floating Metric Pill 2 */}
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute -bottom-4 -right-4 px-4 py-2.5 rounded-xl glass-panel border border-white/15 shadow-xl flex items-center gap-3 hidden sm:flex"
-            >
-              <div className="w-8 h-8 rounded-lg bg-accentSky/20 text-accentSky flex items-center justify-center">
-                <FaCode className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-[11px] font-mono text-textMuted uppercase">Specialization</p>
-                <p className="text-xs font-bold font-heading text-textLight">React & MERN Stack</p>
-              </div>
-            </motion.div>
           </div>
         </motion.div>
       </Container>

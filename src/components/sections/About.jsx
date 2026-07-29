@@ -4,12 +4,14 @@ import {
   FaUserGraduate, FaBullseye, FaLightbulb, FaUsers,
   FaLaptopCode, FaRocket, FaBookOpen
 } from 'react-icons/fa';
-import { developerInfo } from '../../data/developerInfo';
+import { usePortfolio } from '../../context/PortfolioContext';
 import { Section } from '../common/Section';
 import { SectionHeader } from '../common/SectionHeader';
 import { Badge } from '../common/Badge';
 
 export const About = () => {
+  const { about } = usePortfolio();
+
   const cards = [
     {
       icon: FaLaptopCode,
@@ -19,7 +21,7 @@ export const About = () => {
       borderColor: "border-accentSky/20",
       content: (
         <p className="text-textMuted text-sm leading-relaxed font-body">
-          I am an MCA student and Full Stack Developer passionate about building modern web applications using React.js, Node.js, Express.js, and MySQL. I enjoy transforming ideas into responsive, scalable, and user-friendly digital solutions while continuously learning new technologies and improving my development skills.
+          {about.bio}
         </p>
       )
     },
@@ -31,7 +33,7 @@ export const About = () => {
       borderColor: "border-primaryBlue/20",
       content: (
         <p className="text-textMuted text-sm leading-relaxed font-body">
-          I aspire to build scalable, secure, and user-focused web applications while continuously expanding my technical expertise, learning modern technologies, and contributing to meaningful software projects that create real-world impact.
+          {about.careerObjective}
         </p>
       )
     },
@@ -68,7 +70,7 @@ export const About = () => {
       borderColor: "border-amber-500/20",
       content: (
         <div className="flex flex-wrap gap-2">
-          {developerInfo.interests.map((interest, idx) => (
+          {(about.interests || []).map((interest, idx) => (
             <Badge key={idx} variant="primary" size="sm">
               {interest}
             </Badge>
@@ -84,25 +86,8 @@ export const About = () => {
       borderColor: "border-purple-500/20",
       content: (
         <p className="text-textMuted text-sm leading-relaxed font-body">
-          Serving as the Department President, I actively coordinate student activities, support technical events, encourage teamwork, and continuously strengthen my leadership, communication, and organizational skills while contributing positively to the department.
+          {about.leadershipText || 'Serving as the Department President, I actively coordinate student activities, support technical events, encourage teamwork, and continuously strengthen my leadership, communication, and organizational skills while contributing positively to the department.'}
         </p>
-      )
-    },
-    {
-      icon: FaRocket,
-      title: "Quick Highlights",
-      color: "text-rose-400",
-      bgColor: "bg-rose-500/10",
-      borderColor: "border-rose-500/20",
-      content: (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-body">
-          {developerInfo.quickFacts.map((fact, idx) => (
-            <div key={idx} className="p-2.5 rounded-lg bg-white/5 border border-white/5">
-              <span className="text-[10px] font-mono text-textMuted uppercase block">{fact.label}</span>
-              <span className="text-xs font-semibold text-textLight block mt-0.5">{fact.value}</span>
-            </div>
-          ))}
-        </div>
       )
     },
     {
@@ -113,7 +98,7 @@ export const About = () => {
       borderColor: "border-sky-500/20",
       content: (
         <div className="flex flex-wrap gap-2">
-          {developerInfo.currentLearning.map((item, idx) => (
+          {(about.currentLearning || []).map((item, idx) => (
             <Badge key={idx} variant="accent" size="sm">
               {item}
             </Badge>
@@ -140,20 +125,17 @@ export const About = () => {
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.08 }}
-              className="glass-card p-6 rounded-2xl flex flex-col justify-between"
+              className="glass-card p-6 rounded-2xl border border-white/10 hover:border-accentSky/30 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center gap-3 mb-4">
                   <div className={`w-10 h-10 rounded-xl ${card.bgColor} ${card.borderColor} border flex items-center justify-center ${card.color}`}>
                     <Icon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-lg font-bold font-heading text-textLight">
-                    {card.title}
-                  </h3>
+                  <h3 className="text-lg font-bold font-heading text-textLight">{card.title}</h3>
                 </div>
-
                 {card.content}
               </div>
             </motion.div>

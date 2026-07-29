@@ -1,5 +1,6 @@
 import { getDb, readJsonStore, writeJsonStore } from '../config/db.js';
 import { logActivity } from '../middleware/auditMiddleware.js';
+import { sendContactNotification } from '../services/emailService.js';
 
 export const getMessages = async (req, res) => {
   try {
@@ -26,16 +27,19 @@ export const submitMessage = async (req, res) => {
     const ip_address = req.ip || req.connection.remoteAddress || '127.0.0.1';
     const { pool, isMysqlConnected } = getDb();
 
+    let insertedId = null;
+
     if (isMysqlConnected && pool) {
       const [result] = await pool.query(
         'INSERT INTO contact_messages (name, email, subject, message, is_read, ip_address) VALUES (?, ?, ?, ?, 0, ?)',
         [name, email, subject || 'General Inquiry', message, ip_address]
       );
-      return res.status(201).json({ success: true, message: 'Message sent successfully!', id: result.insertId });
+      insertedId = result.insertId;
     } else {
       const messages = readJsonStore('contact_messages');
+      insertedId = Date.now();
       const newMsg = {
-        id: Date.now(),
+        id: insertedId,
         name,
         email,
         subject: subject || 'General Inquiry',
@@ -46,8 +50,18 @@ export const submitMessage = async (req, res) => {
       };
       messages.unshift(newMsg);
       writeJsonStore('contact_messages', messages);
-      return res.status(201).json({ success: true, message: 'Message sent successfully!', data: newMsg });
     }
+
+    // Trigger async email dispatch to itsgowtham.dev@gmail.com
+    sendContactNotification({ name, email, subject, message }).catch(err => {
+      console.error('Async email dispatch error:', err);
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Thank you! Your message has been sent successfully.',
+      id: insertedId
+    });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });
   }
@@ -62,12 +76,14 @@ export const toggleReadStatus = async (req, res) => {
     if (isMysqlConnected && pool) {
       await pool.query('UPDATE contact_messages SET is_read = ? WHERE id = ?', [is_read ? 1 : 0, id]);
     } else {
-      let messages = readJsonStore('contact_messages');
-      messages = messages.map(m => m.id == id ? { ...m, is_read: !!is_read } : m);
-      writeJsonStore('contact_messages', messages);
+      const messages = readJsonStore('contact_messages');
+      const index = messages.findIndex(m => m.id == id);
+      if (index !== -1) {
+        messages[index].is_read = !!is_read;
+        writeJsonStore('contact_messages', messages);
+      }
     }
 
-    await logActivity(req, 'UPDATE', 'Messages', `Updated read status for message ID: ${id}`);
     return res.status(200).json({ success: true, message: 'Message status updated.' });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });
@@ -87,7 +103,7 @@ export const deleteMessage = async (req, res) => {
       writeJsonStore('contact_messages', messages);
     }
 
-    await logActivity(req, 'DELETE', 'Messages', `Deleted contact message ID: ${id}`);
+    await logActivity(req, 'DELETE', 'Messages', `Deleted contact message #${id}`);
     return res.status(200).json({ success: true, message: 'Message deleted successfully.' });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });

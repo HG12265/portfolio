@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBars, FaTimes, FaFileDownload, FaPaperPlane } from 'react-icons/fa';
-import { developerInfo } from '../../data/developerInfo';
+import { usePortfolio } from '../../context/PortfolioContext';
 import { Container } from './Container';
 
 const navItems = [
@@ -15,6 +15,7 @@ const navItems = [
 ];
 
 export const Navbar = ({ activeSection }) => {
+  const { resumeUrl } = usePortfolio();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -35,6 +36,8 @@ export const Navbar = ({ activeSection }) => {
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
+
+  const currentResumePath = resumeUrl || '/assets/resume-gowtham-g.pdf';
 
   return (
     <header
@@ -58,28 +61,27 @@ export const Navbar = ({ activeSection }) => {
             G
           </span>
           <span className="font-heading">
-            <span className="text-textLight">GOWTHAM</span> <span className="text-primaryBlue">G</span>
+            <span className="text-textLight font-extrabold">GOWTHAM</span>{' '}
+            <span className="text-primaryBlue font-extrabold">G</span>
           </span>
         </a>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1 bg-surfaceDark/60 p-1.5 rounded-full border border-white/10 backdrop-blur-md">
+        <nav className="hidden lg:flex items-center gap-1 bg-surfaceDark/70 p-1.5 rounded-full border border-white/10 backdrop-blur-md">
           {navItems.map((item) => {
             const isActive = activeSection === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className={`relative px-4 py-1.5 rounded-full text-xs font-medium font-body transition-colors ${
-                  isActive
-                    ? 'text-textLight font-semibold'
-                    : 'text-textMuted hover:text-textLight'
+                className={`relative px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-colors ${
+                  isActive ? 'text-white font-semibold' : 'text-textMuted hover:text-textLight'
                 }`}
               >
                 {isActive && (
                   <motion.div
-                    layoutId="activeNavBg"
-                    className="absolute inset-0 bg-primaryBlue/80 rounded-full -z-10 shadow-sm shadow-primaryBlue/30"
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-primaryBlue rounded-full -z-10 shadow-sm"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -89,81 +91,81 @@ export const Navbar = ({ activeSection }) => {
           })}
         </nav>
 
-        {/* CTA Actions */}
-        <div className="hidden sm:flex items-center gap-3">
+        {/* Desktop Action Buttons */}
+        <div className="hidden lg:flex items-center gap-3">
           <a
-            href={developerInfo.resumeUrl}
+            href={currentResumePath}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium font-body text-textMuted border border-white/10 hover:border-accentSky/40 hover:text-textLight transition-all"
+            download="GOWTHAM_G_Resume.pdf"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surfaceDark border border-white/10 hover:border-accentSky/40 text-xs font-mono font-medium text-textLight hover:text-accentSky transition-all"
           >
-            <FaFileDownload className="w-3 h-3 text-accentSky" />
-            Resume
+            <FaFileDownload className="w-3.5 h-3.5 text-accentSky" />
+            <span>Resume</span>
           </a>
+
           <button
             onClick={() => scrollToSection('contact')}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-medium font-body bg-primaryBlue hover:bg-blue-600 text-white shadow-md shadow-primaryBlue/20 transition-all hover:scale-105"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primaryBlue hover:bg-blue-600 text-xs font-mono font-semibold text-white shadow-md shadow-primaryBlue/25 transition-all"
           >
             <FaPaperPlane className="w-3 h-3" />
-            Contact
+            <span>Hire Me</span>
           </button>
         </div>
 
         {/* Mobile Hamburger Toggle */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2.5 rounded-lg text-textMuted hover:text-textLight hover:bg-white/5 transition-colors focus:outline-none"
-          aria-label="Toggle Navigation Menu"
+          className="lg:hidden p-2.5 rounded-xl bg-surfaceDark border border-white/10 text-textLight focus:outline-none"
+          aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <FaTimes className="w-5 h-5" /> : <FaBars className="w-5 h-5" />}
         </button>
       </Container>
 
-      {/* Mobile Menu Drawer Overlay */}
+      {/* Mobile Drawer Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
             className="lg:hidden bg-surfaceDark/95 border-b border-white/10 backdrop-blur-xl overflow-hidden"
           >
-            <Container className="py-6 flex flex-col gap-3">
+            <Container className="py-6 flex flex-col space-y-3">
               {navItems.map((item) => {
                 const isActive = activeSection === item.id;
                 return (
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
-                    className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium font-body transition-colors ${
+                    className={`text-left px-4 py-2.5 rounded-xl text-sm font-mono transition-colors ${
                       isActive
-                        ? 'bg-primaryBlue/20 text-accentSky border border-primaryBlue/30'
+                        ? 'bg-primaryBlue/20 text-accentSky border border-primaryBlue/30 font-bold'
                         : 'text-textMuted hover:text-textLight hover:bg-white/5'
                     }`}
                   >
-                    <span>{item.label}</span>
-                    {isActive && <span className="w-2 h-2 rounded-full bg-accentSky" />}
+                    {item.label}
                   </button>
                 );
               })}
 
               <div className="pt-4 border-t border-white/10 flex flex-col gap-2.5">
                 <a
-                  href={developerInfo.resumeUrl}
+                  href={currentResumePath}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium border border-white/10 text-textLight hover:bg-white/5"
+                  download="GOWTHAM_G_Resume.pdf"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-surfaceDark border border-white/10 text-xs font-mono text-textLight"
                 >
-                  <FaFileDownload className="w-4 h-4 text-accentSky" />
-                  Download Resume
+                  <FaFileDownload className="w-3.5 h-3.5 text-accentSky" /> Download Resume
                 </a>
+
                 <button
                   onClick={() => scrollToSection('contact')}
-                  className="flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium bg-primaryBlue text-white shadow-md shadow-primaryBlue/20"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-primaryBlue text-xs font-mono font-bold text-white"
                 >
-                  <FaPaperPlane className="w-4 h-4" />
-                  Get in Touch
+                  <FaPaperPlane className="w-3.5 h-3.5" /> Get in Touch
                 </button>
               </div>
             </Container>

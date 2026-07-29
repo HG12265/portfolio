@@ -20,6 +20,7 @@ import resumeRoutes from './routes/resumeRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 
+import { initDb } from './config/db.js';
 import { seedDatabase } from './scripts/seed.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -46,7 +47,7 @@ app.use(cookieParser());
 
 // Rate Limiter
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 mins
+  windowMs: 15 * 60 * 1000,
   max: 200,
   message: { success: false, message: 'Too many requests from this IP, please try again later.' }
 });
@@ -77,9 +78,11 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
-// Run DB seed on startup
-seedDatabase().catch(err => console.error('Seed Error:', err));
-
-app.listen(PORT, () => {
-  console.log(`[Server] Portfolio CMS Backend running on http://localhost:${PORT}`);
-});
+// Await DB connection first, then run seed
+(async () => {
+  await initDb();
+  await seedDatabase();
+  app.listen(PORT, () => {
+    console.log(`[Server] Portfolio CMS Backend running on http://localhost:${PORT}`);
+  });
+})();

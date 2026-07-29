@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
+import { PortfolioProvider } from '../context/PortfolioContext';
+
 // Common Components
 import { Navbar } from '../components/common/Navbar';
 import { Footer } from '../components/common/Footer';
@@ -22,15 +24,13 @@ export const PublicPortfolio = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
 
-  // Initial Loader Timeout
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1200);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  // IntersectionObserver Scrollspy for Nav
   useEffect(() => {
     const sections = document.querySelectorAll('section[id]');
     
@@ -57,35 +57,30 @@ export const PublicPortfolio = () => {
 
   return (
     <ErrorBoundary>
-      <div className="relative bg-bgDark text-textLight min-h-screen font-body selection:bg-primaryBlue selection:text-white">
-        {/* Loading Screen */}
-        <AnimatePresence>
-          {isLoading && <LoadingScreen key="loader" />}
-        </AnimatePresence>
+      <PortfolioProvider>
+        <div className="relative bg-bgDark text-textLight min-h-screen font-body selection:bg-primaryBlue selection:text-white">
+          <AnimatePresence>
+            {isLoading && <LoadingScreen key="loader" />}
+          </AnimatePresence>
 
-        {/* Ambient Top Reading Progress */}
-        <ScrollProgress />
+          <ScrollProgress />
+          <CursorFollower />
 
-        {/* Desktop Ambient Cursor Glow */}
-        <CursorFollower />
+          <Navbar activeSection={activeSection} />
 
-        {/* Sticky Glass Navbar */}
-        <Navbar activeSection={activeSection} />
+          <main id="main-content">
+            <Hero />
+            <About />
+            <Projects />
+            <Skills />
+            <Education />
+            <Certificates />
+            <Contact />
+          </main>
 
-        {/* Main Content Sections */}
-        <main id="main-content">
-          <Hero />
-          <About />
-          <Projects />
-          <Skills />
-          <Education />
-          <Certificates />
-          <Contact />
-        </main>
-
-        {/* Footer */}
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      </PortfolioProvider>
     </ErrorBoundary>
   );
 };
