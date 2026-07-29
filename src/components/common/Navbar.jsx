@@ -29,12 +29,14 @@ export const Navbar = ({ activeSection }) => {
 
   const scrollToSection = (id) => {
     setMobileMenuOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      const yOffset = -80;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
+    setTimeout(() => {
+      const element = document.getElementById(id);
+      if (element) {
+        const yOffset = -80;
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   const currentResumePath = resumeUrl || '/assets/resume-gowtham-g.pdf';
@@ -42,8 +44,8 @@ export const Navbar = ({ activeSection }) => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-bgDark/80 backdrop-blur-md border-b border-white/10 py-3.5 shadow-xl'
+        isScrolled || mobileMenuOpen
+          ? 'bg-bgDark/95 backdrop-blur-md border-b border-white/10 py-3.5 shadow-xl'
           : 'bg-transparent py-5'
       }`}
     >
@@ -73,6 +75,7 @@ export const Navbar = ({ activeSection }) => {
             return (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => scrollToSection(item.id)}
                 className={`relative px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-colors ${
                   isActive ? 'text-white font-semibold' : 'text-textMuted hover:text-textLight'
@@ -105,6 +108,7 @@ export const Navbar = ({ activeSection }) => {
           </a>
 
           <button
+            type="button"
             onClick={() => scrollToSection('contact')}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primaryBlue hover:bg-blue-600 text-xs font-mono font-semibold text-white shadow-md shadow-primaryBlue/25 transition-all"
           >
@@ -115,8 +119,9 @@ export const Navbar = ({ activeSection }) => {
 
         {/* Mobile Hamburger Toggle */}
         <button
+          type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2.5 rounded-xl bg-surfaceDark border border-white/10 text-textLight focus:outline-none"
+          className="lg:hidden p-2.5 rounded-xl bg-surfaceDark border border-white/10 text-textLight focus:outline-none active:scale-95 transition-transform"
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <FaTimes className="w-5 h-5" /> : <FaBars className="w-5 h-5" />}
@@ -130,22 +135,27 @@ export const Navbar = ({ activeSection }) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-surfaceDark/95 border-b border-white/10 backdrop-blur-xl overflow-hidden"
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="lg:hidden bg-bgDark/98 border-b border-white/10 backdrop-blur-2xl overflow-hidden shadow-2xl"
           >
-            <Container className="py-6 flex flex-col space-y-3">
+            <Container className="py-5 flex flex-col space-y-2">
               {navItems.map((item) => {
                 const isActive = activeSection === item.id;
                 return (
                   <button
                     key={item.id}
+                    type="button"
                     onClick={() => scrollToSection(item.id)}
-                    className={`text-left px-4 py-2.5 rounded-xl text-sm font-mono transition-colors ${
+                    className={`text-left px-4 py-3 rounded-xl text-sm font-mono transition-all flex items-center justify-between active:bg-white/10 ${
                       isActive
-                        ? 'bg-primaryBlue/20 text-accentSky border border-primaryBlue/30 font-bold'
-                        : 'text-textMuted hover:text-textLight hover:bg-white/5'
+                        ? 'bg-primaryBlue/20 text-accentSky border border-primaryBlue/40 font-bold'
+                        : 'text-textMuted hover:text-textLight hover:bg-white/5 border border-transparent'
                     }`}
                   >
-                    {item.label}
+                    <span>{item.label}</span>
+                    {isActive && (
+                      <span className="w-2 h-2 rounded-full bg-accentSky animate-pulse" />
+                    )}
                   </button>
                 );
               })}
@@ -156,14 +166,15 @@ export const Navbar = ({ activeSection }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   download="GOWTHAM_G_Resume.pdf"
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-surfaceDark border border-white/10 text-xs font-mono text-textLight"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-surfaceDark border border-white/10 text-xs font-mono text-textLight active:scale-98 transition-transform"
                 >
                   <FaFileDownload className="w-3.5 h-3.5 text-accentSky" /> Download Resume
                 </a>
 
                 <button
+                  type="button"
                   onClick={() => scrollToSection('contact')}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-primaryBlue text-xs font-mono font-bold text-white"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primaryBlue text-xs font-mono font-bold text-white shadow-lg shadow-primaryBlue/30 active:scale-98 transition-transform"
                 >
                   <FaPaperPlane className="w-3.5 h-3.5" /> Get in Touch
                 </button>
