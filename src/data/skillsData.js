@@ -1,10 +1,9 @@
 import {
   FaReact, FaNodeJs, FaPython, FaGitAlt, FaHtml5, FaCss3Alt,
-  FaJsSquare, FaDocker, FaJava, FaAws, FaGithub, FaNpm, FaCode
+  FaJsSquare, FaDocker, FaAws, FaGithub, FaCode
 } from 'react-icons/fa';
 import {
-  SiTailwindcss, SiExpress, SiMysql, SiVercel, SiBootstrap,
-  SiNginx, SiRender, SiCpanel
+  SiTailwindcss, SiExpress, SiMysql
 } from 'react-icons/si';
 
 export const skillCategories = [
@@ -59,14 +58,6 @@ export const skillsData = [
     color: '#38BDF8',
     description: 'Utility-first styling, custom design systems, responsive layout utility classes.'
   },
-  {
-    name: 'Bootstrap',
-    category: 'frontend',
-    icon: SiBootstrap,
-    proficiency: 'Intermediate',
-    color: '#7952B3',
-    description: 'Responsive grid layout system, UI components, modal dialogs, pre-styled templates.'
-  },
 
   // Backend
   {
@@ -96,7 +87,6 @@ export const skillsData = [
     description: 'Object-oriented programming, data structures, backend scripting, automation.'
   },
 
-
   // Database
   {
     name: 'MySQL',
@@ -117,44 +107,12 @@ export const skillsData = [
     description: 'Cloud hosting, EC2 instances, S3 bucket storage, cloud deployment workflows.'
   },
   {
-    name: 'Vercel',
-    category: 'hosting',
-    icon: SiVercel,
-    proficiency: 'Advanced',
-    color: '#F8FAFC',
-    description: 'Automated frontend deployment pipelines, instant previews, domain configuration.'
-  },
-  {
-    name: 'Render',
-    category: 'hosting',
-    icon: SiRender,
-    proficiency: 'Intermediate',
-    color: '#46E3B7',
-    description: 'Cloud application hosting for full stack web apps and Node.js web services.'
-  },
-  {
-    name: 'cPanel',
-    category: 'hosting',
-    icon: SiCpanel,
-    proficiency: 'Intermediate',
-    color: '#FF6C2C',
-    description: 'Web hosting management, FTP deployment, domain DNS records, database management.'
-  },
-  {
     name: 'Docker',
     category: 'hosting',
     icon: FaDocker,
     proficiency: 'Basic',
     color: '#2496ED',
     description: 'Containerization basics, Dockerfile creation, local environment setup.'
-  },
-  {
-    name: 'Nginx',
-    category: 'hosting',
-    icon: SiNginx,
-    proficiency: 'Basic',
-    color: '#009639',
-    description: 'Web server configuration, reverse proxy setup, static file hosting.'
   },
 
   // Tools

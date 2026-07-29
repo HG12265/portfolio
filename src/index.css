@@ -41,32 +41,32 @@
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563EB;
+  background: #38BDF8;
 }
 
-/* Subtle Glassmorphism Utility */
+/* Glassmorphism & Card Design System */
 .glass-panel {
-  background: rgba(17, 24, 39, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-card {
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(56, 189, 248, 0.25);
-  box-shadow: 0 10px 30px -10px rgba(37, 99, 235, 0.15);
-  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 16px 40px -12px rgba(56, 189, 248, 0.2);
+  transform: translateY(-4px);
 }
 
-/* Gradient Text Utility */
+/* Gradient Text Utilities */
 .text-gradient {
   background: linear-gradient(135deg, #F8FAFC 30%, #38BDF8 100%);
   -webkit-background-clip: text;
@@ -74,12 +74,22 @@
 }
 
 .text-gradient-blue {
-  background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%);
+  background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 50%, #60A5FA 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Glow Background Utility */
+/* Ambient Radial Glow */
 .bg-glow-radial {
-  background: radial-gradient(circle at 50% 30%, rgba(37, 99, 235, 0.15) 0%, rgba(11, 17, 32, 0) 70%);
+  background: radial-gradient(circle at 50% 30%, rgba(37, 99, 235, 0.18) 0%, rgba(11, 17, 32, 0) 70%);
+}
+
+/* Glowing Border Pulse */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 3s infinite ease-in-out;
 }

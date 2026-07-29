@@ -77,10 +77,11 @@ export const Projects = () => {
               <motion.div
                 key={project.id || index}
                 layout
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -6 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.25 }}
                 className="glass-card rounded-2xl overflow-hidden flex flex-col justify-between group border border-white/10 hover:border-accentSky/40 transition-all duration-300 shadow-xl"
               >
                 {/* Card Header & Preview Image */}

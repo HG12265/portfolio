@@ -22,10 +22,10 @@ export const Education = () => {
         {education.map((edu, index) => (
           <motion.div
             key={edu.id || index}
-            initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.5, delay: index * 0.15 }}
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3 }}
             className="glass-card p-6 lg:p-8 rounded-2xl border border-white/10 relative overflow-hidden"
           >
             {/* Top Accent Line */}

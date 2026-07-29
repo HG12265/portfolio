@@ -123,10 +123,10 @@ export const About = () => {
           return (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.08 }}
+              transition={{ duration: 0.3 }}
               className="glass-card p-6 rounded-2xl border border-white/10 hover:border-accentSky/30 transition-all duration-300 flex flex-col justify-between"
             >
               <div>

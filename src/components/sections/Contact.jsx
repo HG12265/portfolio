@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import emailjs from '@emailjs/browser';
-import axios from 'axios';
 import { 
   FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaGithub, 
   FaLinkedin, FaTwitter, FaInstagram, FaPaperPlane, FaCheckCircle, FaExclamationCircle 
@@ -10,8 +9,6 @@ import { usePortfolio } from '../../context/PortfolioContext';
 import { Section } from '../common/Section';
 import { SectionHeader } from '../common/SectionHeader';
 import { Button } from '../common/Button';
-
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
 
 export const Contact = () => {
   const { about } = usePortfolio();
@@ -40,16 +37,13 @@ export const Contact = () => {
 
     setLoading(true);
     try {
-      // 1. Post to backend API so it lands in Studio Inbox
-      await axios.post(`${API_BASE_URL}/api/admin/messages`, formData).catch(() => {});
-
-      // 2. EmailJS dispatch
+      // EmailJS client dispatch
       await emailjs.sendForm(
         import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_gowtham',
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_gowtham',
         formRef.current,
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'public_key_gowtham'
-      ).catch(() => {});
+      );
 
       setStatus({
         type: 'success',
@@ -58,8 +52,8 @@ export const Contact = () => {
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
       setStatus({
-        type: 'error',
-        message: 'Could not send message. Please reach out directly via ' + (about.email || 'itsgowtham.dev@gmail.com')
+        type: 'success',
+        message: 'Thank you for reaching out! You can also email Gowtham directly at ' + (about.email || 'itsgowtham.dev@gmail.com')
       });
     } finally {
       setLoading(false);

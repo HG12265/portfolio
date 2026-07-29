@@ -87,8 +87,9 @@ export const Skills = () => {
               layout
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ y: -4, scale: 1.02 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.25, delay: index * 0.03 }}
+              transition={{ duration: 0.2 }}
               className="glass-card p-5 rounded-xl border border-white/10 hover:border-accentSky/40 transition-all duration-300 group flex flex-col justify-between"
             >
               <div>

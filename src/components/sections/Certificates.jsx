@@ -9,8 +9,6 @@ import { Modal } from '../common/Modal';
 
 const formatFileUrl = (url) => {
   if (!url) return '/assets/mentor-mentee.png';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
   return url;
 };
 
@@ -45,10 +43,11 @@ export const Certificates = () => {
           return (
             <motion.div
               key={cert.id || index}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -5 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.25 }}
               className="glass-card rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-between group hover:border-accentSky/40 transition-all duration-300 shadow-xl"
             >
               <div>
