@@ -72,6 +72,8 @@ export const getMe = async (req, res) => {
   });
 };
 
+export const checkMe = getMe;
+
 export const logout = async (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
