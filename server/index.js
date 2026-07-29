@@ -29,6 +29,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust reverse proxy for Render / Vercel cloud load balancers
+app.set('trust proxy', 1);
+
 // 1. ALWAYS SET CORS HEADERS ON ALL RESPONSES FIRST
 app.use((req, res, next) => {
   const origin = req.headers.origin || '*';
@@ -60,14 +63,6 @@ const limiter = rateLimit({
   message: { success: false, message: 'Too many requests from this IP, please try again later.' }
 });
 app.use('/api/', limiter);
-
-// Strip cPanel subpath prefix (/portfolio-api) if passed by Passenger
-app.use((req, res, next) => {
-  if (req.url.startsWith('/portfolio-api')) {
-    req.url = req.url.replace('/portfolio-api', '') || '/';
-  }
-  next();
-});
 
 // Serve Static Uploads
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -101,7 +96,7 @@ app.get('/health', (req, res) => {
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 'online',
-    message: 'Portfolio CMS Backend API running live on cPanel Node.js Server!',
+    message: 'Portfolio CMS Backend API running live on Render Cloud Server!',
     endpoints: {
       health: '/api/health',
       portfolio: '/api/public/portfolio'
@@ -109,7 +104,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// Universal Error Handler to prevent crash & ensure CORS headers on error
+// Universal Error Handler
 app.use((err, req, res, next) => {
   const origin = req.headers.origin || '*';
   res.header('Access-Control-Allow-Origin', origin);
