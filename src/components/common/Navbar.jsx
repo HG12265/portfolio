@@ -14,7 +14,7 @@ const navItems = [
   { id: 'contact', label: 'Contact' },
 ];
 
-export const Navbar = ({ activeSection }) => {
+export const Navbar = ({ activeSection, onSelectSection }) => {
   const { resumeUrl } = usePortfolio();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -28,15 +28,22 @@ export const Navbar = ({ activeSection }) => {
   }, []);
 
   const scrollToSection = (id) => {
+    if (onSelectSection) {
+      onSelectSection(id);
+    }
     setMobileMenuOpen(false);
     setTimeout(() => {
+      if (id === 'home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
       const element = document.getElementById(id);
       if (element) {
-        const yOffset = -80;
+        const yOffset = -75;
         const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-        window.scrollTo({ top: y, behavior: 'smooth' });
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
       }
-    }, 100);
+    }, 40);
   };
 
   const currentResumePath = resumeUrl || '/assets/resume-gowtham-g.pdf';

@@ -73,7 +73,7 @@ export const Hero = () => {
   };
 
   return (
-    <div className="gh-hero" id="home">
+    <section className="gh-hero" id="home">
       <section className="hero-main" aria-labelledby="hero-title">
         <div className="hero-content">
 
@@ -188,7 +188,7 @@ export const Hero = () => {
           </a>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 
