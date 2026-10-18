@@ -1,126 +1,277 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaSearch, FaTimes } from 'react-icons/fa';
-import { usePortfolio } from '../../context/PortfolioContext';
-import { Section } from '../common/Section';
-import { SectionHeader } from '../common/SectionHeader';
-import { Badge } from '../common/Badge';
+import React, { useMemo, useState } from 'react';
+import { skills, filters } from './skillsData';
+import './SkillsSection.css';
 
-export const Skills = () => {
-  const { skills } = usePortfolio();
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+function SearchIcon() {
+  return (
+    <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+      <circle cx="10.6" cy="10.6" r="6.5" />
+      <path d="m16 16 4.5 4.5" />
+    </svg>
+  );
+}
 
-  const skillCategories = [
-    { id: 'all', name: 'All Stack' },
-    { id: 'frontend', name: 'Frontend' },
-    { id: 'backend', name: 'Backend' },
-    { id: 'programming', name: 'Programming' },
-    { id: 'database', name: 'Database' },
-    { id: 'hosting', name: 'Hosting & Deployment' },
-    { id: 'tools', name: 'Tools' },
-  ];
+function ArrowIcon() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h14m-6-6 6 6-6 6" />
+    </svg>
+  );
+}
 
-  const filteredSkills = skills.filter((skill) => {
-    if (skill.enabled === false) return false;
-    const matchesCategory = activeCategory === 'all' || skill.category === activeCategory;
-    const matchesSearch = skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (skill.description && skill.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
+function SkillLogo({ skill }) {
+  if (skill.icon === 'react') {
+    return (
+      <span className="gg-skills-logo gg-skills-logo--react" aria-hidden="true">
+        <svg viewBox="0 0 42 42" width="35" height="35" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <ellipse cx="21" cy="21" rx="18" ry="7.3" />
+          <ellipse cx="21" cy="21" rx="18" ry="7.3" transform="rotate(60 21 21)" />
+          <ellipse cx="21" cy="21" rx="18" ry="7.3" transform="rotate(120 21 21)" />
+          <circle cx="21" cy="21" r="3.1" fill="currentColor" stroke="none" />
+        </svg>
+      </span>
+    );
+  }
+
+  if (skill.icon === 'docker') {
+    return (
+      <span className="gg-skills-logo gg-skills-logo--docker" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+          <path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.186.185.186zm0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.186.185.186zm-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186zm-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.186.186.186zm5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185zm-2.929 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185zm-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.185-.186H5.136a.186.186 0 00-.186.185v1.888c0 .102.084.185.186.185zm-2.928 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.185-.186H2.208a.186.186 0 00-.186.185v1.888c0 .102.084.185.186.185zm21.688 1.409c-.397-.267-.933-.298-1.528-.109-.16.052-.317.117-.468.192-.403-.328-.888-.54-1.423-.59-.092-.01-.186-.013-.28-.013-.585 0-1.157.17-1.64.492a2.31 2.31 0 00-.472.417 8.35 8.35 0 00-3.136-.598H1.674a.488.488 0 00-.488.489 8.23 8.23 0 003.582 6.782c3.08 2.087 7.42 2.227 10.745.349a10.875 10.875 0 004.887-5.918c.328-.052.65-.136.953-.25.59-.22.955-.589 1.134-1.042.179-.452.123-.925-.192-1.2z" />
+        </svg>
+      </span>
+    );
+  }
 
   return (
-    <Section id="skills" className="bg-white">
-      <SectionHeader
-        badge="Technical Expertise"
-        title="Skills & Technology"
-        highlightTitle="Stack"
-        subtitle="Core technical competencies, frameworks, databases, cloud hosting platforms, and development tools I utilize to build modern web applications."
-      />
-
-      {/* Category Tabs & Search Input */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
-        {/* Category Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto max-w-full pb-2 md:pb-0 custom-scrollbar">
-          {skillCategories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2 rounded-lg text-xs font-mono font-medium transition-all whitespace-nowrap ${
-                activeCategory === cat.id
-                  ? 'bg-indigo-600 text-white shadow-sm border border-indigo-600'
-                  : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 shadow-sm'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Search Bar */}
-        <div className="relative w-full md:w-64">
-          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search technology..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-8 py-2 rounded-lg bg-white border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-body transition-colors shadow-sm"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
-            >
-              <FaTimes className="w-3 h-3" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Skills Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <AnimatePresence mode="popLayout">
-          {filteredSkills.map((skill, index) => (
-            <motion.div
-              key={skill.id || index}
-              layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              className="bg-white p-5 rounded-xl border border-slate-200/90 hover:border-indigo-300 transition-all duration-300 group flex flex-col justify-between shadow-sm hover:shadow-lg hover:shadow-slate-200/60"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm"
-                      style={{ backgroundColor: skill.color || '#4F46E5' }}
-                    />
-                    <h3 className="text-base font-bold font-heading text-slate-900 group-hover:text-indigo-600 transition-colors">
-                      {skill.name}
-                    </h3>
-                  </div>
-                  <Badge variant={skill.proficiency === 'Advanced' ? 'primary' : 'default'} size="xs">
-                    {skill.proficiency || 'Advanced'}
-                  </Badge>
-                </div>
-                <p className="text-slate-600 text-xs font-body leading-relaxed line-clamp-2">
-                  {skill.description}
-                </p>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase text-indigo-600 font-semibold tracking-wider">
-                  {skill.category}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-    </Section>
+    <span className={`gg-skills-logo gg-skills-logo--${skill.icon}`} aria-hidden="true">
+      {skill.mark}
+    </span>
   );
-};
+}
+
+export function SkillsSection() {
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [query, setQuery] = useState('');
+
+  const counts = useMemo(
+    () =>
+      Object.fromEntries(
+        filters.map((f) => [
+          f.id,
+          f.id === 'All' ? skills.length : skills.filter((s) => s.category === f.id).length
+        ])
+      ),
+    []
+  );
+
+  const visible = useMemo(
+    () =>
+      skills.filter(
+        (s) =>
+          (activeFilter === 'All' || s.category === activeFilter) &&
+          `${s.name} ${s.summary || ''} ${s.category}`.toLowerCase().includes(query.trim().toLowerCase())
+      ),
+    [activeFilter, query]
+  );
+
+  const handleProjectsClick = (e) => {
+    e.preventDefault();
+    const el = document.getElementById('projects');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <section className="gg-skills" id="skills" aria-labelledby="gg-skills-title">
+      <div className="gg-skills-container">
+        {/* Header */}
+        <header className="gg-skills-head">
+          <div className="gg-skills-eyebrow">
+            <span className="gg-skills-eyebrow-dot" /> MY DEVELOPMENT TOOLKIT <span className="gg-skills-eyebrow-line" />
+          </div>
+          <h2 id="gg-skills-title">
+            The stack behind <span>what I build.</span>
+          </h2>
+          <p>
+            A practical mix of frontend craft, backend development and the tools I use to turn ideas into useful web applications.
+          </p>
+        </header>
+
+        {/* Top Showcase Banner */}
+        <div className="gg-skills-showcase">
+          <div className="gg-skills-showcase-main">
+            <div className="gg-skills-showcase-top">
+              <span className="gg-skills-chip-light">
+                <i /> MY CORE STACK
+              </span>
+              <span className="gg-skills-asterisk" aria-hidden="true">
+                ✳
+              </span>
+            </div>
+            <h3>
+              From polished interfaces to <em>dependable backends.</em>
+            </h3>
+            <p>Connecting user experiences, APIs and relational data into one complete application.</p>
+            <div className="gg-skills-architecture" aria-label="Typical web application flow: React or Next.js, Node and Express, MySQL">
+              <div>
+                <small>FRONTEND</small>
+                <strong>React / Next.js</strong>
+              </div>
+              <span className="gg-skills-flow-arrow" aria-hidden="true">
+                →
+              </span>
+              <div>
+                <small>BACKEND</small>
+                <strong>Node / Express</strong>
+              </div>
+              <span className="gg-skills-flow-arrow" aria-hidden="true">
+                →
+              </span>
+              <div>
+                <small>DATABASE</small>
+                <strong>MySQL</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="gg-skills-showcase-aside">
+            <article className="gg-skills-capability">
+              <div className="gg-skills-capability-icon gg-skills-purple" aria-hidden="true">
+                ⌘
+              </div>
+              <div>
+                <small>01 / EXPERIENCE</small>
+                <h4>Web interfaces</h4>
+                <p>React, Next.js, JavaScript and responsive design.</p>
+              </div>
+            </article>
+
+            <article className="gg-skills-capability">
+              <div className="gg-skills-capability-icon gg-skills-blue" aria-hidden="true">
+                {`{}`}
+              </div>
+              <div>
+                <small>02 / ENGINEERING</small>
+                <h4>APIs &amp; data</h4>
+                <p>Node.js, Express and structured MySQL workflows.</p>
+              </div>
+            </article>
+
+            <article className="gg-skills-capability">
+              <div className="gg-skills-capability-icon gg-skills-green" aria-hidden="true">
+                ⑂
+              </div>
+              <div>
+                <small>03 / WORKFLOW</small>
+                <h4>Build together</h4>
+                <p>Git, GitHub and a clear development process.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        {/* Explorer Section */}
+        <div className="gg-skills-explorer" id="gg-skills-explorer">
+          <div className="gg-skills-section-label">
+            <span>EXPLORE MY TECHNOLOGIES</span>
+            <i />
+          </div>
+
+          <div className="gg-skills-explorer-heading">
+            <div>
+              <h3>Tools &amp; technologies</h3>
+              <p>Explore the tools I work with and what I’m currently learning.</p>
+            </div>
+            <span className="gg-skills-total">{skills.length} TECHNOLOGIES</span>
+          </div>
+
+          {/* Filter Tabs & Search Bar */}
+          <div className="gg-skills-toolbar">
+            <div className="gg-skills-filters" role="group" aria-label="Filter skills by category">
+              {filters.map((f) => (
+                <button
+                  type="button"
+                  key={f.id}
+                  className={`gg-skills-filter${activeFilter === f.id ? ' is-active' : ''}`}
+                  aria-pressed={activeFilter === f.id}
+                  onClick={() => setActiveFilter(f.id)}
+                >
+                  {f.label}
+                  <span>{counts[f.id]}</span>
+                </button>
+              ))}
+            </div>
+
+            <label className="gg-skills-search">
+              <SearchIcon />
+              <span className="gg-skills-sr-only">Search technologies</span>
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search a technology..."
+                aria-label="Search technologies"
+              />
+            </label>
+          </div>
+
+          {/* Grid of Technology Cards */}
+          <div className="gg-skills-grid" aria-live="polite">
+            {visible.map((skill) => (
+              <article className="gg-skills-card" key={skill.id}>
+                <div className="gg-skills-card-top">
+                  <SkillLogo skill={skill} />
+                  <span
+                    className={`gg-skills-level ${
+                      skill.level === 'Currently learning'
+                        ? 'gg-skills-level-learning'
+                        : skill.level === 'Core stack'
+                        ? 'gg-skills-level-core'
+                        : ''
+                    }`}
+                  >
+                    {skill.level}
+                  </span>
+                </div>
+                <h4>{skill.name}</h4>
+                <p>{skill.summary}</p>
+                <div className="gg-skills-card-bottom">
+                  <span>{skill.category.toUpperCase()}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {visible.length === 0 && (
+            <div className="gg-skills-empty">
+              <strong>No matching technologies.</strong>
+              <p>Try a different search term or category.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveFilter('All');
+                  setQuery('');
+                }}
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
+
+          {/* Footnote */}
+          <div className="gg-skills-footnote">
+            <span>
+              <span className="gg-skills-footnote-dot" /> Learning is ongoing — proficiency labels are intentionally not represented as percentages.
+            </span>
+            <a href="#projects" onClick={handleProjectsClick}>
+              See these skills in action <ArrowIcon />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export const Skills = SkillsSection;
+export default SkillsSection;
