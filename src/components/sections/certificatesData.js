@@ -5,7 +5,7 @@ export const certificateCategories = [
   { id: 'course', label: 'Course Certifications' },
   { id: 'project', label: 'Project Credentials' }
 ];
-pdate
+
 export const certificatesList = [
   {
     id: 'nptel-python',
