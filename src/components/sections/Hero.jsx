@@ -1,30 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaEnvelope, FaArrowRight, FaCheckCircle, FaFileDownload } from 'react-icons/fa';
+import React from 'react';
+import './HeroSection.css';
 import { usePortfolio } from '../../context/PortfolioContext';
-import { Container } from '../common/Container';
-import { Button } from '../common/Button';
+
+const Arrow = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+    <path d="M5 12h14m-6-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const Download = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+    <path d="M12 3v12m-4-4 4 4 4-4M5 17v3h14v-3" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const Monitor = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="15" rx="2" />
+    <path d="M3 10h18M9 20v-3m6 3v-3" />
+  </svg>
+);
+
+const Cap = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M12 3 2 9l10 6 10-6-10-6Zm-6 9v5c3 3 9 3 12 0v-5M22 9v7" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const Check = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="m5 12 4 4L19 6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const Email = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="m4 7 8 6 8-6" />
+  </svg>
+);
+
+const GitHub = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.61-3.37-1.18-3.37-1.18-.45-1.15-1.1-1.46-1.1-1.46-.9-.61.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.33 1.08 2.9.82.1-.64.35-1.08.64-1.33-2.22-.25-4.55-1.1-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.52 9.52 0 0 1 12 6.2c.85 0 1.7.11 2.5.34 1.91-1.3 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.69-4.57 4.93.36.32.68.95.68 1.93v2.87c0 .26.18.57.69.48A10 10 0 0 0 12 2Z" />
+  </svg>
+);
+
+const LinkedIn = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M5 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM3.5 9h3V21h-3V9Zm6 0h2.9v1.64h.04A3.18 3.18 0 0 1 15.3 8.9c3.06 0 3.63 2 3.63 4.6V21h-3v-6.65c0-1.59-.03-3.64-2.22-3.64-2.22 0-2.56 1.73-2.56 3.52V21h-3V9Z" />
+  </svg>
+);
 
 export const Hero = () => {
   const { about, resumeUrl } = usePortfolio();
-  const [roleIndex, setRoleIndex] = useState(0);
 
-  const roles = [
-    'Full Stack Developer',
-    'React Developer',
-    'Backend Developer',
-    'MCA Student',
-    'Web Application Specialist'
-  ];
+  const portrait = about?.profile_image_url || '/assets/gowtham-profile.jpg';
+  const email = about?.email || 'itsgowtham.dev@gmail.com';
+  const githubUrl = about?.github_url || 'https://github.com/gowthamg-dev';
+  const linkedinUrl = about?.linkedin_url || 'https://linkedin.com/in/gowthamg-dev';
+  const currentResumePath = resumeUrl || '/assets/resume-gowtham-g.pdf';
+  const contactHref = `mailto:${email}`;
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % roles.length);
-    }, 2800);
-    return () => clearInterval(interval);
-  }, [roles.length]);
-
-  const scrollToSection = (id) => {
+  const scrollToSection = (e, id) => {
+    e.preventDefault();
     const element = document.getElementById(id);
     if (element) {
       const yOffset = -80;
@@ -33,194 +72,124 @@ export const Hero = () => {
     }
   };
 
-  const profileImageSrc = about.profile_image_url || '/assets/gowtham-profile.png';
-
   return (
-    <section
-      id="home"
-      className="min-h-screen pt-28 pb-16 lg:pt-36 lg:pb-24 flex items-center relative overflow-hidden bg-glow-radial"
-    >
-      {/* Background Ambient Glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primaryBlue/10 blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/3 right-10 w-[350px] h-[350px] rounded-full bg-accentSky/10 blur-[100px] pointer-events-none" />
+    <div className="gh-hero" id="home">
+      <section className="hero-main" aria-labelledby="hero-title">
+        <div className="hero-content">
 
-      <Container className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-        {/* Left Column: Headline & Intro */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="lg:col-span-7 flex flex-col items-start"
-        >
-          {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surfaceDark/80 border border-white/10 text-xs font-mono font-medium text-textMuted mb-6 backdrop-blur-md">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span>Available for Roles & Projects</span>
-          </div>
-
-          {/* Name & Title */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-heading text-textLight">
-            Hi, I'm{' '}
-            <span className="text-gradient-blue">{about.name || 'GOWTHAM G'}</span>
+          <p className="eyebrow">FULL-STACK WEB DEVELOPER · MCA '27</p>
+          <h1 className="hero-title" id="hero-title">
+            Hi, I'm <span className="gradient">Gowtham G</span>
           </h1>
-
-          {/* Animated Role Rotator */}
-          <div className="h-10 sm:h-12 mt-3 flex items-center">
-            <span className="text-xl sm:text-2xl font-semibold font-heading text-textMuted mr-2">
-              I am a
-            </span>
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={roleIndex}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.35 }}
-                className="text-xl sm:text-2xl font-bold font-heading text-accentSky border-b-2 border-accentSky/40 pb-0.5"
-              >
-                {roles[roleIndex]}
-              </motion.span>
-            </AnimatePresence>
-          </div>
-
-          {/* Tagline / Summary Paragraph */}
-          <p className="mt-6 text-base sm:text-lg text-textMuted font-body leading-relaxed max-w-2xl">
-            {about.tagline || about.bio || 'Building modern, scalable, and user-centric web applications with clean architecture and intuitive user experiences.'}
+          <h2 className="hero-role">
+            I build <strong>practical, scalable</strong> web applications.
+          </h2>
+          <p className="hero-summary">
+            I develop responsive web experiences using React, Node.js and MySQL — with hands-on experience building academic portals and management systems for real-world use.
           </p>
-
-          {/* CTAs */}
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => scrollToSection('projects')}
-              icon={FaArrowRight}
-              iconPosition="right"
-            >
-              View Projects
-            </Button>
-
-            <Button
-              variant="outline"
-              size="lg"
-              href={resumeUrl || '/assets/resume-gowtham-g.pdf'}
-              target="_blank"
-              download="GOWTHAM_G_Resume.pdf"
-              icon={FaFileDownload}
-            >
-              Download Resume
-            </Button>
-
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => scrollToSection('contact')}
-            >
-              Contact Me
-            </Button>
+          <div className="hero-tech" aria-label="Core technologies">
+            {['React.js', 'Node.js', 'Express.js', 'MySQL'].map((tech) => (
+              <span key={tech}>{tech}</span>
+            ))}
           </div>
-
-          {/* Dynamic Social Media Links */}
-          <div className="mt-10 flex flex-wrap items-center gap-6 pt-6 border-t border-white/10 w-full max-w-xl">
-            <span className="text-xs font-mono text-textMuted uppercase tracking-wider">
-              Connect:
-            </span>
-            <div className="flex flex-wrap items-center gap-4">
-              {about.github_url && (
-                <a
-                  href={about.github_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
-                >
-                  <FaGithub className="w-4 h-4" /> GitHub
-                </a>
-              )}
-              {about.linkedin_url && (
-                <a
-                  href={about.linkedin_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
-                >
-                  <FaLinkedin className="w-4 h-4" /> LinkedIn
-                </a>
-              )}
-              {about.twitter_url && (
-                <a
-                  href={about.twitter_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
-                >
-                  <FaTwitter className="w-4 h-4" /> Twitter
-                </a>
-              )}
-              {about.instagram_url && (
-                <a
-                  href={about.instagram_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
-                >
-                  <FaInstagram className="w-4 h-4" /> Instagram
-                </a>
-              )}
-              {about.email && (
-                <a
-                  href={`mailto:${about.email}`}
-                  className="text-textMuted hover:text-accentSky transition-colors flex items-center gap-1.5 text-xs font-mono"
-                >
-                  <FaEnvelope className="w-4 h-4" /> Mail
-                </a>
-              )}
+          <div className="hero-actions">
+            <a
+              className="hero-cta main"
+              href="#projects"
+              onClick={(e) => scrollToSection(e, 'projects')}
+            >
+              <span className="cta-long">Explore My Projects</span>
+              <span className="cta-short">View Projects</span>
+              <Arrow />
+            </a>
+            {currentResumePath && (
+              <a
+                className="hero-cta alt"
+                href={currentResumePath}
+                target="_blank"
+                rel="noopener noreferrer"
+                download="GOWTHAM_G_Resume.pdf"
+              >
+                <Download />
+                <span className="cta-long">Download Resume</span>
+                <span className="cta-short">Resume</span>
+              </a>
+            )}
+            <a
+              className="hero-cta text-only"
+              href="#contact"
+              onClick={(e) => scrollToSection(e, 'contact')}
+            >
+              Contact Me ↗
+            </a>
+          </div>
+          <div className="hero-proof">
+            <div className="hero-proof-mark">
+              <Monitor />
+            </div>
+            <div>
+              <strong>Hands-on academic software development</strong>
+              <span>University web portals · Examination systems · Management platforms</span>
             </div>
           </div>
-        </motion.div>
-
-        {/* Right Column: Profile Image Card & Floating Badges */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="lg:col-span-5 relative flex justify-center"
-        >
-          <div className="relative w-full max-w-md">
-            {/* Outer Decorative Gradient Border */}
-            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-primaryBlue via-accentSky to-primaryBlue opacity-40 blur-md hover:opacity-100 transition duration-1000 animate-pulse" />
-
-            {/* Profile Card Frame */}
-            <div className="relative glass-card p-6 sm:p-8 rounded-3xl border border-white/10 bg-surfaceDark/90 backdrop-blur-xl">
-              <div className="relative aspect-square rounded-2xl overflow-hidden mb-6 border border-white/10 group bg-slate-800 flex items-center justify-center">
-                <img
-                  src={profileImageSrc}
-                  alt={about.name || 'GOWTHAM G'}
-                  onError={(e) => {
-                    e.currentTarget.src = '/assets/profile.png';
-                  }}
-                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-bgDark/70 via-transparent to-transparent pointer-events-none" />
+        </div>
+        <div className="hero-photo-area">
+          <div className="photo-glow" />
+          <div className="photo-frame">
+            <img
+              src={portrait}
+              alt="Gowtham G in professional attire"
+              width="485"
+              height="489"
+              decoding="async"
+              fetchPriority="high"
+              onError={(e) => {
+                e.currentTarget.src = '/assets/gowtham-profile.jpg';
+              }}
+            />
+            <div className="photo-corner">
+              <span className="photo-corner-icon">
+                <Cap />
+              </span>
+              MCA · Class of 2027
+            </div>
+            <div className="photo-bottom">
+              <div>
+                <strong>Web applications with real purpose.</strong>
+                <small>Based in Salem, Tamil Nadu, India</small>
               </div>
-
-              {/* Quick Highlight Pills */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 text-xs font-body text-textLight">
-                  <FaCheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>React.js, Node.js & MySQL Specialist</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 text-xs font-body text-textLight">
-                  <FaCheckCircle className="w-4 h-4 text-accentSky shrink-0" />
-                  <span>Periyar University MCA Student</span>
-                </div>
-              </div>
+              <span className="mca-chip">PERIYAR UNIVERSITY</span>
             </div>
           </div>
-        </motion.div>
-      </Container>
-    </section>
+          <div className="photo-float">
+            <div className="photo-float-icon">
+              <Check />
+            </div>
+            <div>
+              <strong>Real-world project work</strong>
+              <span>Academic portals &amp; applications</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div className="quick-connect" aria-label="Contact links">
+        <span className="small-label">CONNECT</span>
+        <a href={contactHref}>
+          <Email /> Email
+        </a>
+        {githubUrl && (
+          <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+            <GitHub /> GitHub
+          </a>
+        )}
+        {linkedinUrl && (
+          <a href={linkedinUrl} target="_blank" rel="noopener noreferrer">
+            <LinkedIn /> LinkedIn
+          </a>
+        )}
+      </div>
+    </div>
   );
 };
+
+export default Hero;

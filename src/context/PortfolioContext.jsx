@@ -9,11 +9,6 @@ import { certificatesData } from '../data/certificatesData';
 
 const PortfolioContext = createContext(null);
 
-const formatFileUrl = (url) => {
-  if (!url) return '/assets/gowtham-profile.jpg';
-  return url;
-};
-
 export const PortfolioProvider = ({ children }) => {
   const [portfolioData] = useState({
     about: {
@@ -51,5 +46,3 @@ export const usePortfolio = () => {
   }
   return context;
 };
-
-export { formatFileUrl };

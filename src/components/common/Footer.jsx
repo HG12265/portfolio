@@ -11,20 +11,20 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-surfaceDark/80 border-t border-white/10 py-12 relative">
+    <footer className="bg-white border-t border-slate-200 py-12 relative">
       <Container className="flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Left: Brand Logo & Copyright */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-1">
-          <div className="flex items-center gap-2 text-lg font-bold font-heading text-textLight">
-            <span className="w-6 h-6 rounded bg-primaryBlue flex items-center justify-center text-white text-xs font-mono">
+          <div className="flex items-center gap-2 text-lg font-bold font-heading text-slate-900">
+            <span className="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center text-white text-xs font-mono">
               G
             </span>
-            <span>GOWTHAM <span className="text-primaryBlue">G</span></span>
+            <span>GOWTHAM <span className="text-indigo-600">G</span></span>
           </div>
-          <p className="text-xs text-textMuted font-body mt-1">
+          <p className="text-xs text-slate-500 font-body mt-1">
             &copy; {new Date().getFullYear()} Gowtham G. All rights reserved.
           </p>
-          <p className="text-[11px] text-textMuted/70 font-mono">
+          <p className="text-[11px] text-slate-400 font-mono">
             {settings.footer_text || 'Designed & Developed with React, Tailwind CSS & Vite'}
           </p>
         </div>
@@ -36,7 +36,7 @@ export const Footer = () => {
               href={about.github_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-lg bg-white/5 border border-white/10 text-textMuted hover:text-textLight hover:border-accentSky/40 hover:bg-accentSky/10 transition-all"
+              className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all shadow-sm"
               aria-label="GitHub Profile"
               title="GitHub"
             >
@@ -48,7 +48,7 @@ export const Footer = () => {
               href={about.linkedin_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-lg bg-white/5 border border-white/10 text-textMuted hover:text-textLight hover:border-accentSky/40 hover:bg-accentSky/10 transition-all"
+              className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all shadow-sm"
               aria-label="LinkedIn Profile"
               title="LinkedIn"
             >
@@ -60,7 +60,7 @@ export const Footer = () => {
               href={about.twitter_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-lg bg-white/5 border border-white/10 text-textMuted hover:text-textLight hover:border-accentSky/40 hover:bg-accentSky/10 transition-all"
+              className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all shadow-sm"
               aria-label="Twitter Profile"
               title="Twitter / X"
             >
@@ -72,7 +72,7 @@ export const Footer = () => {
               href={about.instagram_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-lg bg-white/5 border border-white/10 text-textMuted hover:text-textLight hover:border-accentSky/40 hover:bg-accentSky/10 transition-all"
+              className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all shadow-sm"
               aria-label="Instagram Profile"
               title="Instagram"
             >
@@ -82,7 +82,7 @@ export const Footer = () => {
           {about.email && (
             <a
               href={`mailto:${about.email}`}
-              className="p-2.5 rounded-lg bg-white/5 border border-white/10 text-textMuted hover:text-textLight hover:border-accentSky/40 hover:bg-accentSky/10 transition-all"
+              className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all shadow-sm"
               aria-label="Email Gowtham"
               title="Email"
             >
@@ -94,7 +94,7 @@ export const Footer = () => {
         {/* Right: Back to Top Button */}
         <button
           onClick={scrollToTop}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-xs font-mono font-medium text-textMuted hover:text-textLight hover:border-primaryBlue/50 hover:bg-primaryBlue/10 transition-all group"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-xs font-mono font-medium text-slate-600 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 shadow-sm transition-all group"
         >
           <span>Back to top</span>
           <FaArrowUp className="w-3 h-3 group-hover:-translate-y-0.5 transition-transform" />

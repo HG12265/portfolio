@@ -18,13 +18,13 @@ export const SectionHeader = ({
       className={`mb-12 lg:mb-16 ${center ? 'text-center' : ''} ${className}`}
     >
       {badge && (
-        <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium tracking-wide uppercase bg-primaryBlue/10 text-accentSky border border-primaryBlue/20 mb-4">
-          <span className="w-1.5 h-1.5 rounded-full bg-accentSky animate-pulse" />
+        <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium tracking-wide uppercase bg-indigo-50 text-indigo-700 border border-indigo-200/80 mb-4 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
           {badge}
         </span>
       )}
       
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-textLight font-heading">
+      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 font-heading">
         {title}{' '}
         {highlightTitle && (
           <span className="text-gradient-blue">{highlightTitle}</span>
@@ -32,7 +32,7 @@ export const SectionHeader = ({
       </h2>
       
       {subtitle && (
-        <p className="mt-4 text-base sm:text-lg text-textMuted max-w-2xl mx-auto font-body leading-relaxed">
+        <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto font-body leading-relaxed">
           {subtitle}
         </p>
       )}

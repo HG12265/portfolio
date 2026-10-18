@@ -1,0 +1,672 @@
+/* Scoped stylesheet: Royal Indigo About Section */
+.gg-about {
+  --ab-ink: #121a30;
+  --ab-text: #526079;
+  --ab-indigo: #4f46e5;
+  --ab-blue: #2563eb;
+  --ab-line: #e4eaf4;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: radial-gradient(ellipse 42% 36% at 73% 17%, rgba(79, 70, 229, 0.07), transparent 93%),
+              linear-gradient(180deg, #fbfcff 0%, #f7f9fd 100%);
+  color: var(--ab-ink);
+  font-family: Inter, 'Inter Display', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding: 85px 0 100px;
+  scroll-margin-top: 77px;
+}
+
+.gg-about * {
+  box-sizing: border-box;
+}
+
+.gg-about a {
+  text-decoration: none;
+}
+
+.gg-about a:focus-visible {
+  outline: 3px solid #818cf8;
+  outline-offset: 3px;
+}
+
+.gg-about-inner {
+  width: min(1180px, calc(100% - 54px));
+  margin: 0 auto;
+}
+
+.gg-about-heading {
+  text-align: center;
+  max-width: 790px;
+  margin: 0 auto 45px;
+}
+
+.gg-about-overline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #574cec;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  margin-bottom: 18px;
+}
+
+.gg-about-overline-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #796dff;
+  box-shadow: 0 0 0 4px #eeecff;
+}
+
+.gg-about-overline-line {
+  width: 35px;
+  height: 1px;
+  background: #cfd1ff;
+}
+
+.gg-about-heading h2 {
+  font-size: clamp(34px, 4.05vw, 55px);
+  line-height: 1.13;
+  font-weight: 820;
+  letter-spacing: -0.063em;
+  margin: 0;
+}
+
+.gg-about-heading h2 span {
+  background: linear-gradient(100deg, #5545ee 10%, #2563eb 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gg-about-heading p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #64738c;
+  max-width: 640px;
+  margin: 16px auto 0;
+}
+
+.gg-about-feature-grid {
+  display: grid;
+  grid-template-columns: 1.13fr 0.87fr;
+  gap: 21px;
+  align-items: stretch;
+}
+
+.gg-about-story {
+  position: relative;
+  min-height: 564px;
+  background: #fff;
+  border: 1px solid #e2e7f1;
+  box-shadow: 0 16px 54px rgba(32, 55, 102, 0.045);
+  border-radius: 22px;
+  padding: 39px 43px 35px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gg-about-story:before {
+  content: '';
+  height: 4px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, #5145e7, #3866f1, #6bceeb);
+}
+
+.gg-about-story-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 21px;
+}
+
+.gg-about-kicker {
+  color: #574de0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.gg-about-story-mark {
+  width: 37px;
+  height: 37px;
+  border: 1px solid #e6e8ff;
+  background: #f3f3ff;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: #6256ed;
+}
+
+.gg-about-story h3 {
+  font-size: clamp(29px, 3.1vw, 39px);
+  line-height: 1.23;
+  max-width: 590px;
+  font-weight: 810;
+  letter-spacing: -0.056em;
+  margin: 0 0 19px;
+}
+
+.gg-about-story h3 span {
+  color: #4f46e5;
+}
+
+.gg-about-story > p {
+  font-size: 14px;
+  line-height: 1.86;
+  color: #586982;
+  max-width: 595px;
+  margin: 0 0 13px;
+}
+
+.gg-about-story > p strong {
+  color: #202b42;
+  font-weight: 760;
+}
+
+.gg-about-principles {
+  display: grid;
+  gap: 10px;
+  margin: 11px 0 23px;
+  padding: 19px 0 2px;
+  border-top: 1px solid #edf0f6;
+}
+
+.gg-about-principles > div {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+  color: #495a76;
+  font-size: 12px;
+  font-weight: 620;
+  line-height: 1.55;
+}
+
+.gg-about-principle-icon {
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: #e9f8ef;
+  color: #0b9363;
+  border-radius: 6px;
+}
+
+.gg-about-story-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.gg-about-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  min-height: 46px;
+  padding: 0 19px;
+  background: linear-gradient(110deg, #5745e7, #3565ef);
+  box-shadow: 0 9px 22px rgba(75, 71, 220, 0.13);
+  border-radius: 10px;
+  color: #fff !important;
+  font-size: 12px;
+  font-weight: 760;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gg-about-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(75, 71, 220, 0.22);
+}
+
+.gg-about-btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #3e4c68 !important;
+  font-size: 12px;
+  font-weight: 730;
+  transition: color 0.2s;
+}
+
+.gg-about-btn-text:hover {
+  color: #4f46e5 !important;
+}
+
+.gg-about-snapshot {
+  position: relative;
+  isolation: isolate;
+  background: radial-gradient(ellipse at 95% 0%, #345ab9 0%, transparent 41%),
+              linear-gradient(135deg, #1b2548, #111c3a 75%, #101c38);
+  border: 1px solid #1b2c56;
+  color: #fff;
+  min-height: 564px;
+  box-shadow: 0 22px 56px rgba(25, 38, 74, 0.13);
+  border-radius: 22px;
+  padding: 36px 36px 28px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gg-about-snapshot-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.gg-about-orbit {
+  position: absolute;
+  right: -250px;
+  top: -250px;
+  border-radius: 50%;
+  border: 1px solid rgba(169, 188, 255, 0.12);
+  width: 500px;
+  height: 500px;
+}
+
+.gg-about-orbit.two {
+  right: -185px;
+  top: -185px;
+  width: 370px;
+  height: 370px;
+}
+
+.gg-about-orbit.three {
+  right: -114px;
+  top: -114px;
+  width: 230px;
+  height: 230px;
+}
+
+.gg-about-snap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 29px;
+}
+
+.gg-about-snap-badge {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #93c5fd;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  transition: transform 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.gg-about-snapshot:hover .gg-about-snap-badge {
+  transform: scale(1.05);
+  border-color: rgba(147, 197, 253, 0.4);
+  color: #bfdbfe;
+}
+
+.gg-about-snap-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: #aebee6;
+}
+
+.gg-about-snapshot h3 {
+  color: #ffffff !important;
+  font-size: 35px;
+  line-height: 1.21;
+  letter-spacing: -0.055em;
+  font-weight: 790;
+  margin: 0 0 11px;
+}
+
+.gg-about-snapshot h3 span {
+  color: #76a4ff !important;
+}
+
+.gg-about-snap-intro {
+  font-size: 13px;
+  line-height: 1.75;
+  color: #b9c5dd;
+  margin: 0 0 26px;
+  max-width: 350px;
+}
+
+.gg-about-snap-list {
+  border-top: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.gg-about-snap-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.gg-about-snap-icon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: rgba(115, 141, 237, 0.17);
+  border: 1px solid rgba(176, 194, 255, 0.15);
+  color: #c2d0ff;
+  border-radius: 11px;
+}
+
+.gg-about-snap-row div {
+  min-width: 0;
+}
+
+.gg-about-snap-row small {
+  display: block;
+  letter-spacing: 0.13em;
+  color: #a8b7d9;
+  font-size: 9px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.gg-about-snap-row strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 770;
+  color: #ffffff !important;
+}
+
+.gg-about-snap-row div > span {
+  display: block;
+  color: #bdcbe4;
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 3px;
+}
+
+.gg-about-snap-footer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #c4d2ef;
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: auto;
+  padding-top: 23px;
+}
+
+.gg-about-snap-footer svg {
+  margin-left: auto;
+  opacity: 0.8;
+}
+
+.gg-about-green-dot {
+  height: 7px;
+  width: 7px;
+  border-radius: 50%;
+  background: #48d49b;
+  box-shadow: 0 0 0 4px rgba(72, 212, 155, 0.12);
+}
+
+.gg-about-values-head {
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: #637394;
+  font-weight: 800;
+  margin: 36px 0 17px;
+}
+
+.gg-about-head-rule {
+  height: 1px;
+  flex: 1;
+  background: #e0e6f0;
+}
+
+.gg-about-values {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.gg-about-value-card {
+  position: relative;
+  min-height: 223px;
+  padding: 24px 25px 23px;
+  background: #fff;
+  border-radius: 17px;
+  border: 1px solid #e2e7f1;
+  box-shadow: 0 8px 25px rgba(29, 54, 99, 0.025);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.gg-about-value-card:hover {
+  transform: translateY(-4px);
+  border-color: #cbd5f3;
+  box-shadow: 0 14px 32px rgba(44, 53, 110, 0.075);
+}
+
+.gg-about-value-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+.gg-about-value-icon.lilac {
+  background: #f0efff;
+  color: #594bed;
+}
+
+.gg-about-value-icon.blue {
+  background: #eaf2ff;
+  color: #2663e8;
+}
+
+.gg-about-value-icon.mint {
+  background: #e8f9f2;
+  color: #079568;
+}
+
+.gg-about-value-number {
+  position: absolute;
+  top: 26px;
+  right: 24px;
+  color: #c3cde1;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+}
+
+.gg-about-value-card h4 {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 18px 0 7px;
+}
+
+.gg-about-value-card p {
+  font-size: 12px;
+  line-height: 1.75;
+  color: #64728a;
+  margin: 0 0 15px;
+}
+
+.gg-about-value-tag {
+  font-size: 9px;
+  line-height: 1.5;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  color: #594fec;
+  margin-top: auto;
+}
+
+.gg-about-closer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid #e5eaf2;
+  margin-top: 25px;
+  padding-top: 22px;
+  color: #687994;
+}
+
+.gg-about-closer-symbol {
+  display: grid;
+  place-items: center;
+  color: #4f46e5;
+}
+
+.gg-about-closer p {
+  font-size: 12px;
+  margin: 0;
+}
+
+.gg-about-closer strong {
+  color: #465674;
+}
+
+.gg-about-closer-text {
+  margin-left: auto;
+  letter-spacing: 0.14em;
+  font-size: 10px;
+  font-weight: 770;
+}
+
+@media (max-width: 1040px) {
+  .gg-about {
+    padding: 65px 0 80px;
+  }
+  .gg-about-inner {
+    width: calc(100% - 40px);
+  }
+  .gg-about-feature-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .gg-about-story {
+    padding: 30px;
+    min-height: 585px;
+  }
+  .gg-about-snapshot {
+    padding: 29px;
+    min-height: 585px;
+  }
+  .gg-about-story h3 {
+    font-size: 30px;
+  }
+  .gg-about-snapshot h3 {
+    font-size: 32px;
+  }
+  .gg-about-value-card {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 760px) {
+  .gg-about {
+    padding: 57px 0 65px;
+    scroll-margin-top: 66px;
+  }
+  .gg-about-inner {
+    width: calc(100% - 30px);
+  }
+  .gg-about-heading {
+    margin-bottom: 29px;
+  }
+  .gg-about-heading h2 {
+    font-size: clamp(34px, 7.3vw, 48px);
+  }
+  .gg-about-heading p {
+    font-size: 14px;
+  }
+  .gg-about-feature-grid {
+    grid-template-columns: 1fr;
+  }
+  .gg-about-story,
+  .gg-about-snapshot {
+    min-height: auto;
+  }
+  .gg-about-story {
+    padding: 28px 26px 29px;
+  }
+  .gg-about-story h3 {
+    font-size: clamp(28px, 5.3vw, 37px);
+  }
+  .gg-about-snapshot {
+    padding: 28px 26px 25px;
+  }
+  .gg-about-snapshot h3 {
+    font-size: 32px;
+  }
+  .gg-about-snap-footer {
+    margin-top: 14px;
+  }
+  .gg-about-values {
+    grid-template-columns: 1fr;
+  }
+  .gg-about-value-card {
+    min-height: auto;
+    padding: 21px 23px;
+  }
+  .gg-about-value-card h4 {
+    margin: 13px 0 5px;
+  }
+  .gg-about-values-head {
+    margin-top: 30px;
+  }
+  .gg-about-closer-text {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .gg-about-story {
+    padding: 25px 21px;
+  }
+  .gg-about-story h3 {
+    font-size: 29px;
+  }
+  .gg-about-snapshot {
+    padding: 26px 21px;
+  }
+  .gg-about-snap-eyebrow {
+    font-size: 9px;
+  }
+  .gg-about-btn-primary {
+    padding: 0 14px;
+  }
+  .gg-about-story-actions {
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gg-about * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -10,7 +10,7 @@ export const Education = () => {
   const { education } = usePortfolio();
 
   return (
-    <Section id="education" className="bg-slate-900/40">
+    <Section id="education" className="bg-slate-50/70">
       <SectionHeader
         badge="Academic Roadmap"
         title="Education & Academic"
@@ -26,47 +26,47 @@ export const Education = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.3 }}
-            className="glass-card p-6 lg:p-8 rounded-2xl border border-white/10 relative overflow-hidden"
+            className="bg-white p-6 lg:p-8 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all relative overflow-hidden"
           >
             {/* Top Accent Line */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primaryBlue via-accentSky to-blue-500" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-400" />
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-primaryBlue/10 border border-primaryBlue/20 flex items-center justify-center text-accentSky shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0 shadow-sm">
                   <FaGraduationCap className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold font-heading text-textLight">
+                  <h3 className="text-xl font-bold font-heading text-slate-900">
                     {edu.degree}
                   </h3>
-                  <p className="text-xs font-mono text-textMuted mt-0.5">
+                  <p className="text-xs font-mono text-slate-500 mt-0.5">
                     {edu.institution}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <Badge variant="accent">{edu.period}</Badge>
-                {edu.grade && <Badge variant="primary">{edu.grade}</Badge>}
+                <Badge variant="primary">{edu.period}</Badge>
+                {edu.grade && <Badge variant="success">{edu.grade}</Badge>}
               </div>
             </div>
 
-            <p className="text-sm font-body text-textMuted leading-relaxed mb-6">
+            <p className="text-sm font-body text-slate-600 leading-relaxed mb-6">
               {edu.description}
             </p>
 
             {/* Courses / Modules Grid */}
             {edu.courses && edu.courses.length > 0 && (
               <div>
-                <h4 className="text-xs font-mono uppercase text-accentSky mb-3 flex items-center gap-2">
+                <h4 className="text-xs font-mono uppercase text-indigo-600 mb-3 flex items-center gap-2 font-semibold">
                   <FaBookOpen className="w-3.5 h-3.5" /> Key Focus Courses & Specializations
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {(edu.courses || []).map((course, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-textLight"
+                      className="px-3 py-1 rounded-lg text-xs font-mono bg-slate-100 border border-slate-200/80 text-slate-700 font-medium"
                     >
                       {course}
                     </span>

@@ -42,7 +42,7 @@ export const CursorFollower = () => {
         mass: 0.5,
       }}
     >
-      <div className="w-[400px] h-[400px] rounded-full bg-radial from-primaryBlue/15 via-accentSky/5 to-transparent blur-3xl" />
+      <div className="w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-3xl" />
     </motion.div>
   );
 };

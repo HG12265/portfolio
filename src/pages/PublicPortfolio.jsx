@@ -58,7 +58,7 @@ export const PublicPortfolio = () => {
   return (
     <ErrorBoundary>
       <PortfolioProvider>
-        <div className="relative bg-bgDark text-textLight min-h-screen font-body selection:bg-primaryBlue selection:text-white">
+        <div className="relative bg-slate-50 text-slate-800 min-h-screen font-body selection:bg-indigo-600 selection:text-white">
           <AnimatePresence>
             {isLoading && <LoadingScreen key="loader" />}
           </AnimatePresence>

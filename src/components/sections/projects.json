@@ -1,0 +1,169 @@
+[
+  {
+    "id": "dept",
+    "title": "Periyar University Schools & Departments",
+    "eyebrow": "01 / FEATURED UNIVERSITY WORK",
+    "category": "web",
+    "featured": true,
+    "status": "Official site",
+    "group": "Web Platforms",
+    "institution": "Periyar University",
+    "role": "Lead Full Stack Developer",
+    "timeline": "Live University System",
+    "image": "/assets/dept-portal.png",
+    "browserUrl": "periyaruniversity.ac.in/dept",
+    "description": "An organized, responsive academic web experience that makes university schools and department information easier to explore.",
+    "overview": "Designed and developed the official Schools & Departments portal for Periyar University. The platform provides a structured, responsive interface for students, faculty, and visitors to explore academic departments, faculty directories, research facilities, and program curricula with real-time academic database connectivity.",
+    "highlights": [
+      "Responsive schools and departments interface",
+      "Organized department information and navigation",
+      "Dynamic, database-driven academic content",
+      "Full-stack coordination in a university website project"
+    ],
+    "stack": ["Next.js", "Node.js", "Express.js", "MySQL"],
+    "liveUrl": "https://periyaruniversity.ac.in/dept"
+  },
+  {
+    "id": "pg-exam",
+    "title": "PG Entrance Examination Portal",
+    "eyebrow": "EXAMINATION SYSTEM",
+    "category": "exam",
+    "featured": false,
+    "status": "Production",
+    "group": "Examination Systems",
+    "institution": "Periyar University · Dept of CS",
+    "role": "Full Stack Developer",
+    "timeline": "Production System",
+    "image": "/assets/online-exam.png",
+    "browserUrl": "periyaruniversity.site/pgentrance",
+    "badges": [
+      { "label": "University project", "variant": "white", "dot": "blue" },
+      { "label": "Production", "variant": "green", "dot": "white" },
+      { "label": "Periyar Univ", "variant": "indigo", "icon": "🏛️" }
+    ],
+    "description": "A web application for postgraduate entrance examination workflows within Periyar University's Department of Computer Science.",
+    "overview": "The Postgraduate Entrance Examination Portal was developed for the Department of Computer Science at Periyar University. It handles candidate registration, hall ticket verification, timed examination delivery, and automated score computation with robust security against session tampering.",
+    "highlights": [
+      "Secure candidate authentication & role verification",
+      "Real-time online examination assessment workflow",
+      "Department of Computer Science integration",
+      "Instant result computation and administrative reporting"
+    ],
+    "stack": ["React.js", "Node.js", "Express.js", "MySQL"],
+    "liveUrl": "https://periyaruniversity.site/pgentrance"
+  },
+  {
+    "id": "phd-exam",
+    "title": "Ph.D Entrance Examination Portal",
+    "eyebrow": "EXAMINATION SYSTEM",
+    "category": "exam",
+    "featured": false,
+    "status": "Production",
+    "group": "Examination Systems",
+    "institution": "Periyar University",
+    "role": "Lead Full Stack Developer",
+    "timeline": "Production System",
+    "image": "/assets/phd-portal.png",
+    "browserUrl": "periyaruniversity.site/phdentrance",
+    "badges": [
+      { "label": "University project", "variant": "white", "dot": "blue" },
+      { "label": "Production", "variant": "green", "dot": "white" },
+      { "label": "Periyar Univ", "variant": "indigo", "icon": "🏛️" }
+    ],
+    "description": "An entrance examination interface built for doctoral admissions, with a focused candidate-facing user experience.",
+    "overview": "Designed and developed for Periyar University's doctoral admissions program. The portal coordinates online candidate verification, secure question paper rendering, timed test sessions, and centralized result evaluation for university-wide admissions.",
+    "highlights": [
+      "Doctoral entrance assessment & candidate verification",
+      "Isolated examination sessions with anti-tamper controls",
+      "Scalable question bank and answer processing",
+      "Administrative dashboard for marks entry and rank listing"
+    ],
+    "stack": ["React.js", "Node.js", "Express.js", "MySQL"],
+    "liveUrl": "https://periyaruniversity.site/phdentrance"
+  },
+  {
+    "id": "election-management",
+    "title": "University Election Management Console",
+    "eyebrow": "MANAGEMENT PLATFORM",
+    "category": "management",
+    "featured": false,
+    "status": "Production",
+    "group": "Management Tools",
+    "institution": "Periyar University · Dept of CS",
+    "role": "Lead Developer",
+    "timeline": "Production System",
+    "image": "/assets/election-sys.png",
+    "browserUrl": "periyaruniversity.site/election",
+    "badges": [
+      { "label": "University project", "variant": "white", "dot": "blue" },
+      { "label": "Production", "variant": "green", "dot": "white" },
+      { "label": "Periyar Univ", "variant": "indigo", "icon": "🏛️" }
+    ],
+    "description": "An administrative dashboard interface for managing university election related workflows and records.",
+    "overview": "Developed for the Department of Computer Science, Periyar University. The console automates student council election administration, voter registration validation, confidential digital ballot casting, and real-time tally publishing with cryptographic single-vote verification.",
+    "highlights": [
+      "Ballot administration & student authentication",
+      "Single-vote cryptographic integrity enforcement",
+      "Live tally monitoring and audit reports",
+      "Department council election result publishing"
+    ],
+    "stack": ["HTML5", "CSS3", "PHP", "MySQL"],
+    "liveUrl": "https://periyaruniversity.site/election/index.php"
+  },
+  {
+    "id": "mentor-mentee",
+    "title": "Mentor–Mentee Management System",
+    "eyebrow": "ACADEMIC MANAGEMENT",
+    "category": "management",
+    "featured": false,
+    "status": "Production",
+    "group": "Management Tools",
+    "institution": "Periyar University · Dept of CS",
+    "role": "Lead Full Stack Developer",
+    "timeline": "Live Academic Portal",
+    "image": "/assets/mentor-mentee.png",
+    "browserUrl": "periyaruniversity.ac.in/mentor",
+    "badges": [
+      { "label": "University project", "variant": "white", "dot": "blue" },
+      { "label": "Production", "variant": "green", "dot": "white" },
+      { "label": "Periyar Univ", "variant": "indigo", "icon": "🏛️" }
+    ],
+    "description": "A university-facing portal designed to support structured mentor–mentee academic coordination.",
+    "overview": "A centralized academic coordination tool connecting faculty mentors with student mentees in the Department of Computer Science. Facilitates performance tracking, counseling sessions, academic progress logs, semester reviews, and placement readiness tracking.",
+    "highlights": [
+      "Faculty-student mentor allocation workflows",
+      "Continuous student academic tracking & attendance notes",
+      "Confidential counseling records and feedback",
+      "Department-wide analytical dashboards"
+    ],
+    "stack": ["React.js", "Node.js", "Express.js", "MySQL"],
+    "liveUrl": "https://periyaruniversity.ac.in/mentor"
+  },
+  {
+    "id": "lifedrop",
+    "title": "LifeDrop AI — Blood Donation Concept",
+    "eyebrow": "HEALTHTECH CONCEPT",
+    "category": "concept",
+    "featured": false,
+    "status": "Concept / prototype",
+    "group": "Concepts",
+    "institution": "HealthTech Platform Concept",
+    "role": "Product & Full Stack Lead",
+    "timeline": "Featured Concept",
+    "image": "/assets/lifedrop.png",
+    "browserUrl": "life-drop-ai.vercel.app",
+    "badges": [
+      { "label": "Concept / prototype", "variant": "white", "dot": "red" }
+    ],
+    "description": "A health technology concept exploring better digital experiences for connecting blood donors with people who need help.",
+    "overview": "An innovative digital healthcare prototype connecting blood donors, hospital blood banks, and emergency recipients through AI matching and geo-proximity search. Includes an audit trail concept and bilingual English/Tamil interface.",
+    "highlights": [
+      "AI-powered donor search & location matching",
+      "Transparent audit trail concept for blood safety",
+      "Progressive Web App (PWA) with responsive mobile UI",
+      "Emergency SOS blood request workflow"
+    ],
+    "stack": ["React", "Node.js", "MongoDB", "Gemini AI"],
+    "liveUrl": "https://life-drop-ai.vercel.app"
+  }
+]
