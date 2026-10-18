@@ -1,82 +1,239 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FaGraduationCap, FaBookOpen } from 'react-icons/fa';
-import { usePortfolio } from '../../context/PortfolioContext';
-import { Section } from '../common/Section';
-import { SectionHeader } from '../common/SectionHeader';
-import { Badge } from '../common/Badge';
+import React, { useState } from 'react';
+import './EducationSection.css';
+import { academicRecords, learningTracks } from './educationData';
 
-export const Education = () => {
-  const { education } = usePortfolio();
+const SchoolIcon = () => (
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m3 10 9-6 9 6M5 10v9m4-9v9m6-9v9m4-9v9M3 20h18" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg aria-hidden="true" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m4 10 4 4 8-8" />
+  </svg>
+);
+
+const ArrowIcon = () => (
+  <svg aria-hidden="true" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 10h12m-5-5 5 5-5 5" />
+  </svg>
+);
+
+export function EducationSection({ projectsHref = '#projects' }) {
+  const [selectedTrack, setSelectedTrack] = useState('academics');
+  const activeTrack = learningTracks.find((track) => track.id === selectedTrack) || learningTracks[0];
+
+  const handleProjectsClick = (e) => {
+    if (projectsHref.startsWith('#')) {
+      e.preventDefault();
+      const el = document.querySelector(projectsHref);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
-    <Section id="education" className="bg-slate-50/70">
-      <SectionHeader
-        badge="Academic Roadmap"
-        title="Education & Academic"
-        highlightTitle="Journey"
-        subtitle="Formal academic degrees, specialization coursework, and continuous learning goals."
-      />
+    <section className="ge-education" id="education" aria-labelledby="ge-title">
+      <div className="ge-wrap">
+        {/* Intro Header */}
+        <header className="ge-intro">
+          <div className="ge-eyebrow">EDUCATION &amp; GROWTH</div>
+          <h2 id="ge-title">
+            From learning to <span className="ge-grad">real-world impact.</span>
+          </h2>
+          <p>
+            A journey from computer science fundamentals to building practical, people-first software — one project, problem and lesson at a time.
+          </p>
+        </header>
 
-      <div className="max-w-4xl mx-auto space-y-8">
-        {education.map((edu, index) => (
-          <motion.div
-            key={edu.id || index}
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3 }}
-            className="bg-white p-6 lg:p-8 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all relative overflow-hidden"
-          >
-            {/* Top Accent Line */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-400" />
-
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0 shadow-sm">
-                  <FaGraduationCap className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold font-heading text-slate-900">
-                    {edu.degree}
-                  </h3>
-                  <p className="text-xs font-mono text-slate-500 mt-0.5">
-                    {edu.institution}
-                  </p>
-                </div>
+        {/* Main 2-Column Section */}
+        <div className="ge-main">
+          {/* Academic Timeline */}
+          <div className="ge-academic">
+            <div className="ge-section-top">
+              <div>
+                <div className="ge-kicker">MY EDUCATION</div>
+                <h3>Academic journey</h3>
               </div>
+              <span className="ge-count">
+                {academicRecords.length.toString().padStart(2, '0')} MILESTONES
+              </span>
+            </div>
 
-              <div className="flex items-center gap-2">
-                <Badge variant="primary">{edu.period}</Badge>
-                {edu.grade && <Badge variant="success">{edu.grade}</Badge>}
+            <div className="ge-timeline">
+              {academicRecords.map((record) => (
+                <article className={`ge-item ${record.featured ? 'featured' : ''}`} key={record.id}>
+                  <span className={`ge-dot ${record.featured ? 'ge-featured-dot' : ''}`} aria-hidden="true">
+                    <SchoolIcon />
+                  </span>
+                  <div className="ge-line-top">
+                    <span className="ge-date">{record.years}</span>
+                    <span className={`ge-pill ${record.featured ? '' : 'completed'}`}>
+                      {record.status}
+                    </span>
+                  </div>
+                  <h4>{record.title}</h4>
+                  <div className="ge-school">
+                    <SchoolIcon />
+                    {record.institution}
+                  </div>
+                  <p>{record.description}</p>
+                  <div className="ge-subjects" aria-label="Relevant coursework">
+                    {record.courses.map((course) => (
+                      <span key={course}>{course}</span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          {/* Aside Philosophy & Growth Card */}
+          <aside className="ge-aside" aria-label="How I apply what I learn">
+            <div className="ge-aside-head">
+              <div className="ge-aside-label">
+                <span className="ge-aside-dot" /> BEYOND THE CLASSROOM
+              </div>
+              <h3>
+                Learning by building, <span className="ge-aside-em">not just memorizing.</span>
+              </h3>
+              <p className="ge-aside-desc">
+                My academic foundation guides the way I approach real-world engineering — turning theory into dependable, production-tested software.
+              </p>
+            </div>
+
+            {/* Micro Academic Metrics */}
+            <div className="ge-aside-metrics">
+              <div className="ge-metric-card">
+                <strong>82%</strong>
+                <small>MCA Standing</small>
+              </div>
+              <div className="ge-metric-card">
+                <strong>04</strong>
+                <small>Milestones</small>
+              </div>
+              <div className="ge-metric-card">
+                <strong>100%</strong>
+                <small>Hands-On Code</small>
               </div>
             </div>
 
-            <p className="text-sm font-body text-slate-600 leading-relaxed mb-6">
-              {edu.description}
-            </p>
-
-            {/* Courses / Modules Grid */}
-            {edu.courses && edu.courses.length > 0 && (
-              <div>
-                <h4 className="text-xs font-mono uppercase text-indigo-600 mb-3 flex items-center gap-2 font-semibold">
-                  <FaBookOpen className="w-3.5 h-3.5" /> Key Focus Courses & Specializations
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {(edu.courses || []).map((course, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 rounded-lg text-xs font-mono bg-slate-100 border border-slate-200/80 text-slate-700 font-medium"
-                    >
-                      {course}
-                    </span>
-                  ))}
+            {/* 4 Professional Engineering Stages */}
+            <div className="ge-stages">
+              <div className="ge-stage">
+                <div className="ge-stage-num ge-stage-indigo">01</div>
+                <div>
+                  <b>Master the Fundamentals</b>
+                  <span>Data structures, relational database schemas &amp; OOP architecture.</span>
                 </div>
               </div>
-            )}
-          </motion.div>
-        ))}
+
+              <div className="ge-stage">
+                <div className="ge-stage-num ge-stage-blue">02</div>
+                <div>
+                  <b>Ship Production Portals</b>
+                  <span>Building real academic systems for Periyar University.</span>
+                </div>
+              </div>
+
+              <div className="ge-stage">
+                <div className="ge-stage-num ge-stage-emerald">03</div>
+                <div>
+                  <b>Modern Full-Stack Craft</b>
+                  <span>React, Node.js, Express, MySQL and component architecture.</span>
+                </div>
+              </div>
+
+              <div className="ge-stage">
+                <div className="ge-stage-num ge-stage-amber">04</div>
+                <div>
+                  <b>Continuous Technical Evolution</b>
+                  <span>Docker containers, cloud infrastructure &amp; scalable web systems.</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Current Academic Status Footer */}
+            <div className="ge-aside-foot">
+              <div className="ge-aside-foot-inner">
+                <div className="ge-foot-icon">
+                  <CheckIcon />
+                </div>
+                <div>
+                  <strong>Currently Pursuing MCA (Final Year)</strong>
+                  <span>Periyar University, Salem · Expected 2027</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        {/* Learning Roadmap Tabs */}
+        <div className="ge-learning">
+          <div className="ge-learning-heading">
+            <div>
+              <div className="ge-overline">MY LEARNING ROADMAP</div>
+              <h3>What I'm learning &amp; applying</h3>
+              <p>A closer look at the knowledge behind my development journey.</p>
+            </div>
+            <span className="ge-learning-count">LEARNING IN PROGRESS</span>
+          </div>
+
+          <div className="ge-learning-box">
+            <div className="ge-tabs" role="tablist" aria-label="Learning focus categories">
+              {learningTracks.map((track) => (
+                <button
+                  key={track.id}
+                  id={`ge-tab-${track.id}`}
+                  role="tab"
+                  type="button"
+                  aria-selected={selectedTrack === track.id}
+                  aria-controls="ge-track-panel"
+                  onClick={() => setSelectedTrack(track.id)}
+                >
+                  {track.label}
+                </button>
+              ))}
+            </div>
+
+            <div
+              id="ge-track-panel"
+              className="ge-learning-panel"
+              role="tabpanel"
+              aria-labelledby={`ge-tab-${activeTrack.id}`}
+            >
+              <div>
+                <div className="ge-track-kicker">{activeTrack.kicker}</div>
+                <h4>{activeTrack.heading}</h4>
+                <p>{activeTrack.description}</p>
+              </div>
+
+              <div className="ge-track-items">
+                {activeTrack.items.map((item) => (
+                  <div className="ge-track-item" key={item}>
+                    <CheckIcon />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer CTA */}
+        <div className="ge-footer-cta">
+          <div>
+            <h3>Curious how I use these skills?</h3>
+            <p>Explore the software projects where learning turns into practical work.</p>
+          </div>
+          <a href={projectsHref} onClick={handleProjectsClick}>
+            Explore my projects <ArrowIcon />
+          </a>
+        </div>
       </div>
-    </Section>
+    </section>
   );
-};
+}
+
+export const Education = EducationSection;
+export default EducationSection;

@@ -1,329 +1,294 @@
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import emailjs from '@emailjs/browser';
-import { 
-  FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaGithub, 
-  FaLinkedin, FaTwitter, FaInstagram, FaPaperPlane, FaCheckCircle, FaExclamationCircle 
-} from 'react-icons/fa';
+import React, { useState } from 'react';
+import ContactIcon from './ContactIcons';
+import { defaultContact } from './contactData';
 import { usePortfolio } from '../../context/PortfolioContext';
-import { Section } from '../common/Section';
-import { SectionHeader } from '../common/SectionHeader';
-import { Button } from '../common/Button';
+import './ContactFooter.css';
 
-export const Contact = () => {
+export function ContactSection({ contact, onSubmitMessage }) {
   const { about } = usePortfolio();
-  const formRef = useRef(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState({ type: '', message: '' });
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (status.message) setStatus({ type: '', message: '' });
+  const details = {
+    ...defaultContact,
+    email: about?.email || defaultContact.email,
+    phone: about?.phone || defaultContact.phone,
+    phoneLabel: about?.phone || defaultContact.phoneLabel,
+    location: about?.location || defaultContact.location,
+    ...contact,
   };
 
-  const handleSubmit = async (e) => {
+  const [copied, setCopied] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function copyEmail() {
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard is unavailable');
+      await navigator.clipboard.writeText(details.email);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setFeedback(`Please select and copy this address: ${details.email}`);
+    }
+  }
+
+  async function submit(e) {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
-      setStatus({ type: 'error', message: 'Please fill in all required fields.' });
+    const form = e.currentTarget;
+    if (!form.reportValidity()) return;
+    const data = new FormData(form);
+    const fields = {
+      name: String(data.get('name') || '').trim(),
+      email: String(data.get('email') || '').trim(),
+      inquiry: String(data.get('inquiry') || ''),
+      subject: String(data.get('subject') || '').trim(),
+      message: String(data.get('message') || '').trim(),
+    };
+
+    if (fields.name.length < 2 || fields.subject.length < 3 || fields.message.length < 10) {
+      setFeedback('Please complete all required fields with enough detail.');
       return;
     }
 
-    setLoading(true);
-    try {
-      const emailjsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-      const emailjsTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-      const emailjsPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-      const web3FormsKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+    if (typeof onSubmitMessage === 'function') {
+      setLoading(true);
+      setFeedback('');
+      try {
+        const result = await onSubmitMessage(fields);
+        if (result === false) throw new Error('Delivery was not confirmed.');
+        setFeedback('Message submitted successfully. Thank you for reaching out!');
+        form.reset();
+      } catch {
+        setFeedback('The message could not be sent. Please email me directly using the address on this page.');
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
 
-      // 1. Web3Forms integration (if configured)
-      if (web3FormsKey && web3FormsKey !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
-        const response = await fetch('https://api.web3forms.com/submit', {
+    // Direct Web3Forms submission if configured
+    const web3FormsKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+    if (web3FormsKey && web3FormsKey !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
+      setLoading(true);
+      setFeedback('');
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
             access_key: web3FormsKey,
-            name: formData.name,
-            email: formData.email,
-            replyto: formData.email,
-            subject: formData.subject ? `[Portfolio] ${formData.subject}` : `New Message from ${formData.name} via Portfolio`,
-            message: formData.message,
-            from_name: `${formData.name} (Portfolio Contact)`,
-            botcheck: false
-          })
+            name: fields.name,
+            email: fields.email,
+            replyto: fields.email,
+            subject: `[Portfolio Inquiry] ${fields.subject}`,
+            inquiry_type: fields.inquiry,
+            message: fields.message,
+            from_name: `${fields.name} (Portfolio Inquiry)`,
+          }),
         });
-        const res = await response.json();
-        if (res.success) {
-          setStatus({
-            type: 'success',
-            message: 'Thank you! Your message has been sent directly to Gowtham\'s email.'
-          });
-          setFormData({ name: '', email: '', subject: '', message: '' });
+        const result = await res.json();
+        if (result.success) {
+          setFeedback('Message sent successfully! Thank you for reaching out. I will respond promptly.');
+          form.reset();
           return;
         }
+      } catch {
+        // Fallback to mailto below if network fails
+      } finally {
+        setLoading(false);
       }
-
-      // 2. EmailJS integration (if configured)
-      if (emailjsServiceId && emailjsTemplateId && emailjsPublicKey && emailjsServiceId !== 'service_gowtham') {
-        await emailjs.sendForm(
-          emailjsServiceId,
-          emailjsTemplateId,
-          formRef.current,
-          emailjsPublicKey
-        );
-        setStatus({
-          type: 'success',
-          message: 'Thank you! Your message has been sent successfully to Gowtham\'s email.'
-        });
-        setFormData({ name: '', email: '', subject: '', message: '' });
-        return;
-      }
-
-      // 3. Fallback: mailto link
-      const subject = encodeURIComponent(formData.subject || `Portfolio Message from ${formData.name}`);
-      const body = encodeURIComponent(
-        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-      );
-      window.location.href = `mailto:${about.email || 'itsgowtham.dev@gmail.com'}?subject=${subject}&body=${body}`;
-
-      setStatus({
-        type: 'success',
-        message: `Opening your email client to send message to ${about.email || 'itsgowtham.dev@gmail.com'}.`
-      });
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      setStatus({
-        type: 'error',
-        message: 'Failed to send message automatically. Please try emailing directly to ' + (about.email || 'itsgowtham.dev@gmail.com')
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+
+    // Default mailto compose fallback
+    const body = `Name: ${fields.name}\nEmail: ${fields.email}\nInquiry Type: ${fields.inquiry}\n\n${fields.message}`;
+    const url = `mailto:${details.email}?subject=${encodeURIComponent(fields.subject)}&body=${encodeURIComponent(body)}`;
+    setFeedback('Your email app will open with your message prepared. Press Send to deliver it!');
+    window.location.assign(url);
+  }
 
   return (
-    <Section id="contact" className="bg-slate-50/70">
-      <SectionHeader
-        badge="Get in Touch"
-        title="Let's Build Something"
-        highlightTitle="Together"
-        subtitle="Open to full-time opportunities, internship roles, web application development, and technical collaborations."
-      />
+    <section id="contact" className="ggc-contact" aria-labelledby="ggc-contact-heading">
+      <div className="ggc-container">
+        {/* Header */}
+        <div className="ggc-section-head">
+          <div className="ggc-eyebrow">LET'S CONNECT</div>
+          <h2 id="ggc-contact-heading">
+            Let's build something <span className="ggc-gradient">meaningful.</span>
+          </h2>
+          <p>
+            Open to internships, full-stack developer opportunities, and thoughtful collaborations. Have a project, position, or idea in mind? I'd love to hear about it.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        {/* Left Column: Direct Contact Info & Socials */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="lg:col-span-5 space-y-6"
-        >
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/90 shadow-sm space-y-6">
-            <h3 className="text-xl font-bold font-heading text-slate-900">
-              Contact Details
+        {/* 2-Column Contact Grid */}
+        <div className="ggc-contact-grid">
+          {/* Left Intro Panel */}
+          <aside className="ggc-intro-panel">
+            <div className="ggc-status">
+              <span /> OPEN TO OPPORTUNITIES
+            </div>
+            <h3>
+              Great things start with a <em>conversation.</em>
             </h3>
+            <p className="ggc-intro-copy">
+              I'm passionate about developing clean, scalable web applications and working with people who care about building things well. Let's explore what we can create together.
+            </p>
 
-            <div className="space-y-4 font-body">
-              <a
-                href={`mailto:${about.email || 'itsgowtham.dev@gmail.com'}`}
-                className="flex items-center gap-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-indigo-300 hover:bg-indigo-50/30 transition-all group"
-              >
-                <div className="w-10 h-10 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
-                  <FaEnvelope className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-mono text-slate-500 uppercase block font-semibold">Email</span>
-                  <span className="text-xs font-semibold text-slate-900 block">{about.email || 'itsgowtham.dev@gmail.com'}</span>
-                </div>
-              </a>
-
-              <a
-                href={`tel:${(about.phone || '+91 9344232465').replace(/\s+/g, '')}`}
-                className="flex items-center gap-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-indigo-300 hover:bg-indigo-50/30 transition-all group"
-              >
-                <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
-                  <FaPhoneAlt className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-mono text-slate-500 uppercase block font-semibold">Phone</span>
-                  <span className="text-xs font-semibold text-slate-900 block">{about.phone || '+91 9344232465'}</span>
-                </div>
-              </a>
-
-              <div className="flex items-center gap-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
-                  <FaMapMarkerAlt className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-mono text-slate-500 uppercase block font-semibold">Location</span>
-                  <span className="text-xs font-semibold text-slate-900 block">{about.location || 'Salem, Tamil Nadu, India'}</span>
-                </div>
+            <div className="ggc-opportunity">
+              <div className="ggc-small-label">I'M INTERESTED IN</div>
+              <div className="ggc-opportunity-list">
+                <span>Full-Stack Roles</span>
+                <span>MCA Internships</span>
+                <span>Web Projects</span>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-200">
-              <span className="text-xs font-mono text-slate-500 uppercase tracking-wider block mb-3 font-semibold">
-                Social Profiles
-              </span>
-              <div className="flex items-center gap-3">
-                {about.github_url && (
-                  <a
-                    href={about.github_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-indigo-600 border border-slate-200 shadow-sm transition-colors"
-                    title="GitHub"
-                  >
-                    <FaGithub className="w-4 h-4" />
-                  </a>
-                )}
-                {about.linkedin_url && (
-                  <a
-                    href={about.linkedin_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-indigo-600 border border-slate-200 shadow-sm transition-colors"
-                    title="LinkedIn"
-                  >
-                    <FaLinkedin className="w-4 h-4" />
-                  </a>
-                )}
-                {about.twitter_url && (
-                  <a
-                    href={about.twitter_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-indigo-600 border border-slate-200 shadow-sm transition-colors"
-                    title="Twitter / X"
-                  >
-                    <FaTwitter className="w-4 h-4" />
-                  </a>
-                )}
-                {about.instagram_url && (
-                  <a
-                    href={about.instagram_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-indigo-600 border border-slate-200 shadow-sm transition-colors"
-                    title="Instagram"
-                  >
-                    <FaInstagram className="w-4 h-4" />
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Right Column: Contact Message Form */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="lg:col-span-7"
-        >
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/90 shadow-sm">
-            <h3 className="text-xl font-bold font-heading text-slate-900 mb-6">
-              Send a Message
-            </h3>
-
-            <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-              <input type="hidden" name="to_email" value={about.email || 'itsgowtham.dev@gmail.com'} />
-              <input type="hidden" name="from_name" value={formData.name} />
-              <input type="hidden" name="from_email" value={formData.email} />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-mono text-slate-600 mb-1 uppercase font-semibold">Your Name *</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    placeholder="John Doe"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-body shadow-sm transition-colors"
-                  />
+            <div className="ggc-direct-contacts">
+              <div className="ggc-direct-row">
+                <span className="ggc-direct-icon">
+                  <ContactIcon name="mail" size={19} />
+                </span>
+                <div className="ggc-direct-body">
+                  <span>EMAIL ME DIRECTLY</span>
+                  <a href={`mailto:${details.email}`}>{details.email}</a>
                 </div>
-
-                <div>
-                  <label className="block text-xs font-mono text-slate-600 mb-1 uppercase font-semibold">Your Email *</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="john@example.com"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-body shadow-sm transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-slate-600 mb-1 uppercase font-semibold">Subject</label>
-                <input
-                  type="text"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  placeholder="Project Inquiry / Job Opportunity"
-                  className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-body shadow-sm transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-slate-600 mb-1 uppercase font-semibold">Your Message *</label>
-                <textarea
-                  name="message"
-                  rows="5"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  placeholder="Hi Gowtham, I would like to discuss..."
-                  className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-body resize-none shadow-sm transition-colors"
-                />
-              </div>
-
-              {status.message && (
-                <div
-                  className={`p-4 rounded-xl text-xs font-body flex items-start gap-2.5 ${
-                    status.type === 'success'
-                      ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                      : 'bg-rose-50 border border-rose-200 text-rose-800'
-                  }`}
+                <button
+                  type="button"
+                  className="ggc-copy"
+                  onClick={copyEmail}
+                  title={copied ? 'Copied!' : 'Copy email'}
+                  aria-label={copied ? 'Email copied' : 'Copy email address'}
                 >
-                  {status.type === 'success' ? (
-                    <FaCheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  ) : (
-                    <FaExclamationCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                  )}
-                  <span>{status.message}</span>
+                  <ContactIcon name={copied ? 'check' : 'copy'} size={16} />
+                </button>
+              </div>
+
+              <div className="ggc-direct-row">
+                <span className="ggc-direct-icon">
+                  <ContactIcon name="pin" size={18} />
+                </span>
+                <div className="ggc-direct-body">
+                  <span>BASED IN</span>
+                  <strong>{details.location}</strong>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Right Inquiry Form */}
+          <div className="ggc-form-panel">
+            <div className="ggc-form-head">
+              <div className="ggc-form-kicker">SEND AN INQUIRY</div>
+              <h3>Tell me a little about your idea.</h3>
+              <p>Fill in the details below and I'll have everything needed to get the conversation started.</p>
+            </div>
+
+            <form className="ggc-form" onSubmit={submit}>
+              <div className="ggc-form-pair">
+                <div className="ggc-field">
+                  <label htmlFor="ggc-name">
+                    Full name <b>*</b>
+                  </label>
+                  <input
+                    id="ggc-name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    minLength={2}
+                    maxLength={80}
+                    placeholder="Your full name"
+                    required
+                  />
+                </div>
+                <div className="ggc-field">
+                  <label htmlFor="ggc-email">
+                    Email address <b>*</b>
+                  </label>
+                  <input
+                    id="ggc-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    maxLength={150}
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="ggc-field">
+                <label htmlFor="ggc-inquiry">
+                  What is this about? <b>*</b>
+                </label>
+                <select id="ggc-inquiry" name="inquiry" required defaultValue="">
+                  <option value="" disabled>
+                    Select an inquiry type
+                  </option>
+                  <option>Internship / Job Opportunity</option>
+                  <option>Website or Web Application Project</option>
+                  <option>Collaboration / Partnership</option>
+                  <option>General Inquiry</option>
+                </select>
+              </div>
+
+              <div className="ggc-field">
+                <label htmlFor="ggc-subject">
+                  Subject <b>*</b>
+                </label>
+                <input
+                  id="ggc-subject"
+                  name="subject"
+                  type="text"
+                  minLength={3}
+                  maxLength={120}
+                  placeholder="A short title for your message"
+                  required
+                />
+              </div>
+
+              <div className="ggc-field">
+                <label htmlFor="ggc-message">
+                  Your message <b>*</b>
+                </label>
+                <textarea
+                  id="ggc-message"
+                  name="message"
+                  minLength={10}
+                  maxLength={3000}
+                  placeholder="Hi Gowtham, I'd like to talk about..."
+                  required
+                />
+              </div>
+
+              <button className="ggc-submit" disabled={loading} type="submit">
+                <ContactIcon name="send" size={16} />{' '}
+                {loading ? 'Sending...' : 'Compose Email'}{' '}
+                <ContactIcon name="arrow-up-right" size={16} />
+              </button>
+
+              <div className="ggc-form-note">
+                <ContactIcon name="shield" size={14} />
+                <span>Opens your email application with the message prepared. It does not send anything automatically.</span>
+              </div>
+
+              {feedback && (
+                <div className="ggc-form-feedback" role="status" aria-live="polite">
+                  {feedback}
                 </div>
               )}
-
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                loading={loading}
-                icon={FaPaperPlane}
-                className="w-full shadow-sm"
-              >
-                Send Message
-              </Button>
             </form>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Extra Bottom Hello */}
+        <div className="ggc-extra">
+          <ContactIcon name="spark" size={17} /> Prefer a quick introduction?{' '}
+          <a href={`mailto:${details.email}?subject=Hello%20Gowtham`}>
+            Say hello directly <ContactIcon name="arrow-up-right" size={13} />
+          </a>
+        </div>
       </div>
-    </Section>
+    </section>
   );
-};
+}
+
+export const Contact = ContactSection;
+export default ContactSection;
