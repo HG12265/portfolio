@@ -50,17 +50,6 @@ function CodeIcon({ size = 20 }) {
   );
 }
 
-function PdfFileIcon({ size = 24 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
-      <path d="M9 15h6" />
-      <path d="M9 11h2" />
-    </svg>
-  );
-}
-
 function SearchIcon({ size = 15 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -159,23 +148,17 @@ function CertificateDetailModal({ cert, onClose }) {
 
         {/* Content */}
         <div className="gc-modal-content">
-          {/* Visual Showcase */}
-          <div className="gc-modal-preview-box">
-            {isPdf ? (
-              <div className="gc-visual--pdf" style={{ padding: '24px 0' }}>
-                <div className="gc-pdf-icon-ring" style={{ width: '68px', height: '68px' }}>
-                  <PdfFileIcon size={32} />
-                </div>
-                <div style={{ marginTop: '12px' }}>
-                  <strong style={{ display: 'block', fontSize: '14px', color: '#0f172a' }}>
-                    {cert.title}.pdf
-                  </strong>
-                  <span className="gc-pdf-label" style={{ marginTop: '6px', display: 'inline-block' }}>
-                    Official Verified Document · NPTEL
-                  </span>
-                </div>
-              </div>
-            ) : (
+          {/* Certificate Image / Visual Showcase */}
+          {cert.imageUrl ? (
+            <div className="gc-modal-image-preview-wrap">
+              <img
+                src={cert.imageUrl}
+                alt={cert.title}
+                className="gc-modal-image-preview"
+              />
+            </div>
+          ) : (
+            <div className="gc-modal-preview-box">
               <div className="gc-visual--badge" style={{ padding: '20px 0' }}>
                 <div className="gc-visual-award-ring" style={{ width: '70px', height: '70px' }}>
                   {cert.category === 'project' ? <CodeIcon size={32} /> : <TrophyIcon size={32} />}
@@ -184,8 +167,8 @@ function CertificateDetailModal({ cert, onClose }) {
                   {cert.award}
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Meta Grid */}
           <div className="gc-modal-meta-grid">
@@ -238,7 +221,7 @@ function CertificateDetailModal({ cert, onClose }) {
 
         {/* Modal Actions */}
         <div className="gc-modal-actions">
-          {isPdf && (
+          {cert.fileUrl && (
             <a
               href={cert.fileUrl}
               target="_blank"
@@ -246,7 +229,7 @@ function CertificateDetailModal({ cert, onClose }) {
               className="gc-btn-action gc-btn-primary"
               style={{ padding: '10px 20px' }}
             >
-              <span>Open PDF Document</span>
+              <span>{isPdf ? 'Open PDF Document' : 'View Full Image'}</span>
               <ExternalIcon />
             </a>
           )}
@@ -301,14 +284,6 @@ export const Certificates = () => {
       return matchesCategory && matchesQuery;
     });
   }, [selectedCategory, searchQuery]);
-
-  const handleCardClick = (cert) => {
-    if (cert.fileType === 'pdf' && cert.fileUrl) {
-      window.open(cert.fileUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      setModalCert(cert);
-    }
-  };
 
   return (
     <section className="gc-certificates" id="certificates" aria-labelledby="gc-title">
@@ -475,11 +450,27 @@ export const Certificates = () => {
               >
                 {/* Visual Header */}
                 <div
-                  className={`gc-card-visual ${isPdf ? 'gc-visual--pdf' : cert.category === 'project' ? 'gc-visual--project' : 'gc-visual--badge'}`}
-                  onClick={() => handleCardClick(cert)}
+                  className="gc-card-visual"
+                  onClick={() => setModalCert(cert)}
                   style={{ cursor: 'pointer' }}
-                  title="Click to view credential"
+                  title="Click to view certificate"
                 >
+                  {cert.imageUrl ? (
+                    <>
+                      <img
+                        src={cert.imageUrl}
+                        alt={cert.title}
+                        className="gc-card-thumb-img"
+                        loading="lazy"
+                      />
+                      <div className="gc-card-thumb-gradient" />
+                    </>
+                  ) : (
+                    <div className="gc-visual-award-ring">
+                      {cert.category === 'project' ? <CodeIcon size={28} /> : <TrophyIcon size={28} />}
+                    </div>
+                  )}
+
                   {/* Category Pill Overlay */}
                   <span className={`gc-card-category-tag ${catClass}`}>
                     {cert.categoryLabel}
@@ -489,29 +480,6 @@ export const Certificates = () => {
                   <span className="gc-card-date-tag">
                     {cert.duration}
                   </span>
-
-                  {/* Icon illustration */}
-                  {isPdf ? (
-                    <>
-                      <div className="gc-pdf-icon-ring">
-                        <PdfFileIcon size={28} />
-                      </div>
-                      <span className="gc-pdf-label">PDF Certificate · NPTEL</span>
-                    </>
-                  ) : (
-                    <>
-                      <div className="gc-visual-award-ring">
-                        {cert.category === 'project' ? (
-                          <CodeIcon size={28} />
-                        ) : (
-                          <TrophyIcon size={28} />
-                        )}
-                      </div>
-                      <span className="gc-visual-award-tag">
-                        {cert.awardType === 'winner' ? 'Symposium Winner' : cert.categoryLabel}
-                      </span>
-                    </>
-                  )}
                 </div>
 
                 {/* Card Body */}
@@ -545,34 +513,27 @@ export const Certificates = () => {
 
                 {/* Card Footer Actions */}
                 <div className="gc-card-footer">
-                  {isPdf ? (
+                  <button
+                    type="button"
+                    className="gc-btn-action gc-btn-primary"
+                    onClick={() => setModalCert(cert)}
+                  >
+                    <EyeIcon />
+                    <span>View Certificate</span>
+                  </button>
+
+                  {cert.fileUrl && (
                     <a
                       href={cert.fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="gc-btn-action gc-btn-primary"
+                      className="gc-btn-action gc-btn-secondary"
+                      title="Open full document in new tab"
                     >
-                      <EyeIcon />
-                      <span>View PDF</span>
+                      <ExternalIcon />
+                      <span>{isPdf ? 'Open PDF' : 'Full File'}</span>
                     </a>
-                  ) : (
-                    <button
-                      type="button"
-                      className="gc-btn-action gc-btn-primary"
-                      onClick={() => setModalCert(cert)}
-                    >
-                      <EyeIcon />
-                      <span>View Details</span>
-                    </button>
                   )}
-
-                  <button
-                    type="button"
-                    className="gc-btn-action gc-btn-secondary"
-                    onClick={() => setModalCert(cert)}
-                  >
-                    <span>Full Info</span>
-                  </button>
                 </div>
               </article>
             );
